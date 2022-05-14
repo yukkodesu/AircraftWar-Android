@@ -9,14 +9,14 @@ import com.badlogic.gdx.math.Rectangle;
 public abstract class AbstractFlyingObject {
     protected int height = -1;
     protected int width = -1;
-    protected int speedX;
-    protected int speedY;
+    protected float speedX;
+    protected float speedY;
     protected Texture image = null;
     Rectangle rigidObject = null;
     private boolean isValid = true;
 
 
-    public AbstractFlyingObject(float locationX, float locationY, int speedX, int speedY) {
+    public AbstractFlyingObject(float locationX, float locationY, float speedX, float speedY) {
         this.speedX = speedX;
         this.speedY = speedY;
         getImage();
@@ -35,7 +35,7 @@ public abstract class AbstractFlyingObject {
         if (this.rigidObject.x <= 0 || this.rigidObject.x >= MainGame.viewportWidth) {
             speedX = -speedX;
         }
-        if(this.rigidObject.y < 0) {
+        if(this.rigidObject.y + height < 0) {
             vanish();
         }
     }
@@ -53,7 +53,7 @@ public abstract class AbstractFlyingObject {
         return this.rigidObject.y;
     }
 
-    public int getSpeedY() {
+    public float getSpeedY() {
         return speedY;
     }
 

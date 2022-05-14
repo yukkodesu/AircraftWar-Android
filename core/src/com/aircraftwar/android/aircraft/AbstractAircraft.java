@@ -2,11 +2,12 @@ package com.aircraftwar.android.aircraft;
 
 import com.aircraftwar.android.basic.AbstractFlyingObject;
 
+
 public abstract class AbstractAircraft extends AbstractFlyingObject {
     protected int maxHp;
     protected int hp;
 
-    public AbstractAircraft(float locationX, float locationY, int speedX, int speedY, int hp) {
+    public AbstractAircraft(float locationX, float locationY, float speedX, float speedY, int hp) {
         super(locationX, locationY, speedX, speedY);
         this.hp = hp;
         this.maxHp = hp;
@@ -35,6 +36,10 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
     public int getMaxHp() {
         return this.maxHp;
     }
+
+    public void shoot(){
+        //TODO
+    };
 
 
 //    public abstract List<AbstractBullet> shoot();
