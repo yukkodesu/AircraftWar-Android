@@ -83,6 +83,7 @@ public abstract class AbstractFlyingObject {
         return width;
     }
 
+
     public int getHeight() {
         if (height == -1) {
             height = ImageManager.get(this).getHeight();

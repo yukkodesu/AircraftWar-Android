@@ -3,7 +3,7 @@ package com.aircraftwar.android.application;
 import com.aircraftwar.android.aircraft.AbstractAircraft;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
-import com.aircraftwar.android.application.ImageManager;
+import com.aircraftwar.android.bullet.AbstractBullet;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,8 +18,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class MainGame extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -33,6 +31,7 @@ public class MainGame extends ApplicationAdapter {
 
     private HeroAircraft heroAircraft;
     private Array<AbstractAircraft> enemyAircrafts;
+    private Array<AbstractBullet> heroBullets;
     private final int enemyMaxNumber = 5;
     private long lastEnemyGen = 0;
     private long enemyGenDuration = 1000000000;
@@ -50,6 +49,7 @@ public class MainGame extends ApplicationAdapter {
         heroAircraft = new HeroAircraft(0, 0, 0, 0, 100);
         heroAircraft.setLocation(viewportWidth / 2 - heroAircraft.getWidth() / 2, 0);
         enemyAircrafts = new Array<>();
+        heroBullets = new Array<>();
     }
 
     @Override
@@ -70,10 +70,11 @@ public class MainGame extends ApplicationAdapter {
                             MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth() / 2)),
                             MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
                             0, 200, 10));
+            heroBullets.addAll(heroAircraft.shoot());
         }
 
         //HeroAircraft Move
-        aircraftMove();
+        objectMove();
 
         //Crash check
         crashCheck();
@@ -109,6 +110,15 @@ public class MainGame extends ApplicationAdapter {
                 iterator.remove();
             }
         }
+        //Draw Bullets
+        for (Array.ArrayIterator<AbstractBullet> iterator = heroBullets.iterator(); iterator.hasNext();) {
+            AbstractBullet bullet = iterator.next();
+            if (!bullet.notValid()) {
+                batch.draw(bullet.getImage(), bullet.getLocationX(), bullet.getLocationY(), bullet.getWidth(), bullet.getHeight());
+            } else {
+                iterator.remove();
+            }
+        }
 
         //Draw Aircraft
         batch.draw(heroAircraft.getImage(), heroAircraft.getLocationX(), heroAircraft.getLocationY(), heroAircraft.getWidth(), heroAircraft.getHeight());
@@ -123,9 +133,12 @@ public class MainGame extends ApplicationAdapter {
     }
 
 
-    private void aircraftMove() {
+    private void objectMove() {
         for (AbstractAircraft enemy : enemyAircrafts) {
             enemy.forward();
+        }
+        for (AbstractBullet bullet: heroBullets) {
+            bullet.forward();
         }
         if (Gdx.input.isTouched()) {
             Vector3 touchPos = new Vector3();

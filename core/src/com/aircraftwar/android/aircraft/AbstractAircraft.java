@@ -1,16 +1,24 @@
 package com.aircraftwar.android.aircraft;
 
+import com.aircraftwar.android.aircraft.shootstrategy.ShootStrategy;
 import com.aircraftwar.android.basic.AbstractFlyingObject;
+import com.aircraftwar.android.bullet.AbstractBullet;
+import com.badlogic.gdx.utils.Array;
 
 
 public abstract class AbstractAircraft extends AbstractFlyingObject {
     protected int maxHp;
     protected int hp;
+    protected int shootNum;
+    protected int power;
+    protected ShootStrategy shootStrategy;
 
     public AbstractAircraft(float locationX, float locationY, float speedX, float speedY, int hp) {
         super(locationX, locationY, speedX, speedY);
         this.hp = hp;
         this.maxHp = hp;
+        this.shootNum = 1;
+        this.power = 10;
     }
 
     public void decreaseHp(int decrease) {
@@ -37,8 +45,28 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
         return this.maxHp;
     }
 
-    public void shoot(){
-        //TODO
+    public void setShootNum(int shootNum) {
+        this.shootNum = shootNum;
+    }
+
+    public int getShootNum() {
+        return shootNum;
+    }
+
+    public void setPower(int power) {
+        this.power = power;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public void setShootStrategy(ShootStrategy shootStrategy) {
+        this.shootStrategy = shootStrategy;
+    }
+
+    public Array<AbstractBullet> shoot(){
+        return shootStrategy.shoot(this);
     };
 
 
