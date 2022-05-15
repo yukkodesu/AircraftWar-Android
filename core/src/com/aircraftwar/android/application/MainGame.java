@@ -38,7 +38,7 @@ public class MainGame extends ApplicationAdapter {
     private BitmapFont font24;
     private float backgroundTop;
 
-    private int heroSpeed = 200;
+    private int heroSpeed = 1000;
     private HeroAircraft heroAircraft;
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
@@ -92,7 +92,7 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         drawBackground();
         drawObject();
-        font24.draw(batch, "SCORE: " + Integer.toString(score),0,viewportHeight-10);
+        font24.draw(batch, "SCORE: " + Integer.toString(score), 0, viewportHeight - 10);
         batch.end();
 
 
@@ -134,7 +134,7 @@ public class MainGame extends ApplicationAdapter {
                 enemyAircrafts.add(
                         new BossEnemy(
                                 MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
-                                MathUtils.random((float) (viewportHeight * 0.95), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight()/2,
+                                MathUtils.random((float) (viewportHeight * 0.95), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight() / 2,
                                 100, 0, 100));
             }
         }
@@ -278,9 +278,27 @@ public class MainGame extends ApplicationAdapter {
             camera.unproject(touchPos);
             float deltaX = heroAircraft.getLocationX() - (touchPos.x - heroAircraft.getWidth() / 2);
             float deltaY = heroAircraft.getLocationY() - (touchPos.y - heroAircraft.getHeight() / 2);
-            if (Math.abs(deltaX) < heroAircraft.getWidth() / 2 && Math.abs(deltaY) < heroAircraft.getHeight() / 2) {
+            if (Math.abs(deltaX) < heroAircraft.getWidth() / 4 && Math.abs(deltaY) < heroAircraft.getHeight() / 4) {
                 heroAircraft.setLocation(touchPos.x - heroAircraft.getWidth() / 2, touchPos.y - heroAircraft.getWidth() / 2);
+            } else {
+                float speedXRate = (float) Math.sqrt(deltaX * deltaX / (deltaX * deltaX + deltaY * deltaY));
+                float speedYRate = (float) Math.sqrt(deltaY * deltaY / (deltaX * deltaX + deltaY * deltaY));
+                if (deltaX > 0) {
+                    heroAircraft.setSpeedX(-speedXRate * heroSpeed);
+                } else {
+                    heroAircraft.setSpeedX(speedXRate * heroSpeed);
+                }
+                if (deltaY > 0) {
+                    heroAircraft.setSpeedY(speedYRate * heroSpeed);
+                } else {
+                    heroAircraft.setSpeedY(-speedYRate * heroSpeed);
+                }
+                if (Math.abs(deltaX) > heroAircraft.getWidth() / 5 || Math.abs(deltaY) > heroAircraft.getHeight() / 5) {
+                    heroAircraft.forward();
+
+                }
             }
+
         }
     }
 
