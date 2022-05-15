@@ -1,13 +1,14 @@
 package com.aircraftwar.android.application;
 
 import com.aircraftwar.android.aircraft.AbstractAircraft;
+import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
-import com.aircraftwar.android.aircraft.MobEnemy;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -20,6 +21,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.Iterator;
 
 public class MainGame extends ApplicationAdapter {
+    private int score = 0;
+    private BitmapFont font;
     private SpriteBatch batch;
     private Texture background;
     public static final int viewportWidth = 512;
@@ -32,9 +35,15 @@ public class MainGame extends ApplicationAdapter {
     private HeroAircraft heroAircraft;
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
+    private Array<AbstractBullet> enemyBullets;
     private final int enemyMaxNumber = 5;
-    private long lastEnemyGen = 0;
+    private long lastEnemyGenTime = 0;
     private long enemyGenDuration = 1000000000;
+    private long heroLastShootGenTime = 0;
+    private long heroShootGenDuration = 500000000;
+    private long eliteLastShootGenTime = 0;
+    private long eliteShootGenDuration = 500000000;
+
 
 
     @Override
@@ -50,6 +59,10 @@ public class MainGame extends ApplicationAdapter {
         heroAircraft.setLocation(viewportWidth / 2 - heroAircraft.getWidth() / 2, 0);
         enemyAircrafts = new Array<>();
         heroBullets = new Array<>();
+        enemyBullets = new Array<>();
+        font = new BitmapFont();
+
+
     }
 
     @Override
@@ -59,19 +72,24 @@ public class MainGame extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         drawBackground();
-        drawAircraft();
+        drawObject();
+        font.draw(batch, Integer.toString(score),0,viewportHeight-20);
         batch.end();
 
+
+
+
         //Enemy Generate
-        if (enemyAircrafts.size < enemyMaxNumber && TimeUtils.nanoTime() - lastEnemyGen > enemyGenDuration) {
-            lastEnemyGen = TimeUtils.nanoTime();
+        if (enemyAircrafts.size < enemyMaxNumber && TimeUtils.nanoTime() - lastEnemyGenTime > enemyGenDuration) {
+            lastEnemyGenTime = TimeUtils.nanoTime();
             enemyAircrafts.add(
-                    new MobEnemy(
+                    new EliteEnemy(
                             MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth() / 2)),
                             MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
                             0, 200, 10));
-            heroBullets.addAll(heroAircraft.shoot());
         }
+
+        shootAction();
 
         //HeroAircraft Move
         objectMove();
@@ -87,6 +105,25 @@ public class MainGame extends ApplicationAdapter {
         batch.dispose();
     }
 
+    //shoot
+    private void shootAction() {
+        //heroaircraft shoot
+        if (TimeUtils.nanoTime() - heroLastShootGenTime > heroShootGenDuration) {
+            heroLastShootGenTime = TimeUtils.nanoTime();
+            heroBullets.addAll(heroAircraft.shoot());
+        }
+
+        //elite enemy shoot
+        if (TimeUtils.nanoTime() - eliteLastShootGenTime > eliteShootGenDuration) {
+            eliteLastShootGenTime = TimeUtils.nanoTime();
+            for(AbstractAircraft enemy:enemyAircrafts) {
+                if(enemy instanceof EliteEnemy) {
+                    enemyBullets.addAll(enemy.shoot());
+                }
+            }
+        }
+
+    }
 
     private void drawBackground() {
         //Draw Background
@@ -100,7 +137,7 @@ public class MainGame extends ApplicationAdapter {
         }
     }
 
-    private void drawAircraft() {
+    private void drawObject() {
         //Draw Enemy
         for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext();) {
             AbstractAircraft enemy = iterator.next();
@@ -119,17 +156,50 @@ public class MainGame extends ApplicationAdapter {
                 iterator.remove();
             }
         }
+        for (Array.ArrayIterator<AbstractBullet> iterator = enemyBullets.iterator(); iterator.hasNext();) {
+            AbstractBullet bullet = iterator.next();
+            if (!bullet.notValid()) {
+                batch.draw(bullet.getImage(), bullet.getLocationX(), bullet.getLocationY(), bullet.getWidth(), bullet.getHeight());
+            } else {
+                iterator.remove();
+            }
+        }
 
         //Draw Aircraft
         batch.draw(heroAircraft.getImage(), heroAircraft.getLocationX(), heroAircraft.getLocationY(), heroAircraft.getWidth(), heroAircraft.getHeight());
     }
 
     private void crashCheck(){
+        //check whether hero crashes enemy
         for(AbstractAircraft enemy :enemyAircrafts){
+            if(enemy.notValid()) {
+                continue;
+            }
             if(enemy.crash(heroAircraft)){
-                //TODO: Game End
+//                Gdx.app.exit();
+                //TODO
             }
         }
+
+        //check whether hero bullets hit enemy
+        for(AbstractBullet bullet : heroBullets) {
+            if(bullet.notValid()) {
+                continue;
+            }
+            for(AbstractAircraft enemy:enemyAircrafts) {
+                if(enemy.notValid()) {
+                    continue;
+                }
+                if(enemy.crash(bullet)) {
+                    enemy.decreaseHp(bullet.getPower());
+                    bullet.vanish();
+                    if(enemy.notValid()) {
+                        score += 10;
+                    }
+                }
+            }
+        }
+
     }
 
 
@@ -138,6 +208,9 @@ public class MainGame extends ApplicationAdapter {
             enemy.forward();
         }
         for (AbstractBullet bullet: heroBullets) {
+            bullet.forward();
+        }
+        for (AbstractBullet bullet: enemyBullets) {
             bullet.forward();
         }
         if (Gdx.input.isTouched()) {

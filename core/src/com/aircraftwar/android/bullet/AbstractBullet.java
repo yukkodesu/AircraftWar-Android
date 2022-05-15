@@ -11,4 +11,9 @@ public class AbstractBullet extends AbstractFlyingObject {
         super(locationX, locationY, speedX, speedY);
         this.power = power;
     }
+
+
+    public int getPower() {
+        return power;
+    }
 }
