@@ -126,7 +126,7 @@ public class MainGame extends ApplicationAdapter {
                 enemyAircrafts.add(
                         new BossEnemy(
                                 MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
-                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight(),
+                                MathUtils.random((float) (viewportHeight * 0.95), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight()/2,
                                 100, 0, 100));
             }
         }
