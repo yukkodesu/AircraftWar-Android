@@ -34,7 +34,7 @@ public class MainGame extends ApplicationAdapter {
     private Viewport viewport;
     private float backgroundTop;
 
-
+    private int heroSpeed = 200;
     private HeroAircraft heroAircraft;
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
@@ -126,7 +126,7 @@ public class MainGame extends ApplicationAdapter {
                 enemyAircrafts.add(
                         new BossEnemy(
                                 MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
-                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight)-ImageManager.BOSS_ENEMY_IMAGE.getHeight(),
+                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight(),
                                 100, 0, 100));
             }
         }
@@ -268,7 +268,11 @@ public class MainGame extends ApplicationAdapter {
             Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
-            heroAircraft.setLocation(touchPos.x - heroAircraft.getWidth() / 2, touchPos.y - heroAircraft.getWidth() / 2);
+            float deltaX = heroAircraft.getLocationX() - (touchPos.x - heroAircraft.getWidth() / 2);
+            float deltaY = heroAircraft.getLocationY() - (touchPos.y - heroAircraft.getHeight() / 2);
+            if (Math.abs(deltaX) < heroAircraft.getWidth() / 2 && Math.abs(deltaY) < heroAircraft.getHeight() / 2) {
+                heroAircraft.setLocation(touchPos.x - heroAircraft.getWidth() / 2, touchPos.y - heroAircraft.getWidth() / 2);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.aircraftwar.android.aircraft.shootstrategy;
 
 import com.aircraftwar.android.aircraft.AbstractAircraft;
+import com.aircraftwar.android.application.ImageManager;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.aircraftwar.android.bullet.EnemyBullet;
 import com.aircraftwar.android.bullet.HeroBullet;
@@ -8,13 +9,15 @@ import com.badlogic.gdx.utils.Array;
 
 public class EnemyShoot implements ShootStrategy{
     private int direction = 1;
-    private EnemyBullet bulletTemplate;
+    private int bulletHeight;
+    private int bulletWidth;
     @Override
     public Array<AbstractBullet> shoot(AbstractAircraft abstractAircraft) {
+        bulletHeight = ImageManager.ENEMY_BULLET_IMAGE.getHeight();
+        bulletWidth = ImageManager.ENEMY_BULLET_IMAGE.getWidth();
         Array<AbstractBullet> res = new Array<>();
-        bulletTemplate = new EnemyBullet(0,0,0,0,0);
-        float x = abstractAircraft.getLocationX() + abstractAircraft.getWidth()/2 - bulletTemplate.getWidth()/2;
-        float y = abstractAircraft.getLocationY() + bulletTemplate.getHeight();
+        float x = abstractAircraft.getLocationX() + abstractAircraft.getWidth()/2 - bulletWidth/2;
+        float y = abstractAircraft.getLocationY() + bulletHeight;
         float speedX = 0;
         float speedY = 250;
         AbstractBullet abstractBullet;
