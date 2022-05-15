@@ -1,6 +1,7 @@
 package com.aircraftwar.android.application;
 
 import com.aircraftwar.android.aircraft.AbstractAircraft;
+import com.aircraftwar.android.aircraft.BossEnemy;
 import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
@@ -38,6 +39,12 @@ public class MainGame extends ApplicationAdapter {
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
     private Array<AbstractBullet> enemyBullets;
+    /**
+     * the number of boss ever existed
+     */
+    private int bossNumber = 0;
+    private boolean bossExisting = false;
+    private int bossThreshold = 200;
     private final int enemyMaxNumber = 5;
     private final int eliteRate = 1;
     private long lastEnemyGenTime = 0;
@@ -46,7 +53,8 @@ public class MainGame extends ApplicationAdapter {
     private long heroShootGenDuration = 500000000;
     private long eliteLastShootGenTime = 0;
     private long eliteShootGenDuration = 500000000;
-
+    private long bossLastShootGenTime = 0;
+    private long bossShootGenDuration = 500000000;
 
 
     @Override
@@ -54,8 +62,8 @@ public class MainGame extends ApplicationAdapter {
         //Initialize
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false,viewportWidth,viewportHeight);
-        viewport = new ExtendViewport(viewportWidth,viewportHeight, camera);
+        camera.setToOrtho(false, viewportWidth, viewportHeight);
+        viewport = new ExtendViewport(viewportWidth, viewportHeight, camera);
         background = ImageManager.BACKGROUND_IMAGE;
         backgroundTop = viewportHeight;
         heroAircraft = new HeroAircraft(0, 0, 0, 0, 100);
@@ -76,10 +84,8 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         drawBackground();
         drawObject();
-        font.draw(batch, Integer.toString(score),0,viewportHeight-20);
+        font.draw(batch, Integer.toString(score), 0, viewportHeight - 20);
         batch.end();
-
-
 
 
         //Enemy Generate
@@ -99,19 +105,29 @@ public class MainGame extends ApplicationAdapter {
     private void enemyGenerate() {
         if (enemyAircrafts.size < enemyMaxNumber && TimeUtils.nanoTime() - lastEnemyGenTime > enemyGenDuration) {
             lastEnemyGenTime = TimeUtils.nanoTime();
-            if(new Random().nextInt()%5 < eliteRate) {
-                enemyAircrafts.add(
-                        new EliteEnemy(
-                                MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth() )),
-                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
-                                50, 100, 10));
+            if (!bossExisting) {
+                if (MathUtils.random(1, 5) <= eliteRate) {
+                    enemyAircrafts.add(
+                            new EliteEnemy(
+                                    MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.ELITE_ENEMY_IMAGE.getWidth())),
+                                    MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
+                                    100, 100, 20));
+                } else {
+                    enemyAircrafts.add(
+                            new MobEnemy(
+                                    MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                                    MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
+                                    0, 200, 10));
+                }
             }
-            else {
+            if (score / bossThreshold > bossNumber && bossExisting == false) {
+                bossNumber++;
+                bossExisting = true;
                 enemyAircrafts.add(
-                        new MobEnemy(
-                                MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
-                                0, 200, 10));
+                        new BossEnemy(
+                                MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
+                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight)-ImageManager.BOSS_ENEMY_IMAGE.getHeight(),
+                                100, 0, 100));
             }
         }
     }
@@ -134,13 +150,22 @@ public class MainGame extends ApplicationAdapter {
         //elite enemy shoot
         if (TimeUtils.nanoTime() - eliteLastShootGenTime > eliteShootGenDuration) {
             eliteLastShootGenTime = TimeUtils.nanoTime();
-            for(AbstractAircraft enemy:enemyAircrafts) {
-                if(enemy instanceof EliteEnemy) {
+            for (AbstractAircraft enemy : enemyAircrafts) {
+                if (enemy instanceof EliteEnemy) {
                     enemyBullets.addAll(enemy.shoot());
                 }
             }
         }
 
+        //boss shoot
+        if (TimeUtils.nanoTime() - bossLastShootGenTime > bossShootGenDuration) {
+            bossLastShootGenTime = TimeUtils.nanoTime();
+            for (AbstractAircraft enemy : enemyAircrafts) {
+                if (enemy instanceof BossEnemy) {
+                    enemyBullets.addAll(enemy.shoot());
+                }
+            }
+        }
     }
 
     private void drawBackground() {
@@ -149,7 +174,7 @@ public class MainGame extends ApplicationAdapter {
         batch.draw(background, 0, backgroundTop);
 
         //Background Scrolling
-        backgroundTop -= 100 *  Gdx.graphics.getDeltaTime();
+        backgroundTop -= 100 * Gdx.graphics.getDeltaTime();
         if (backgroundTop <= 0) {
             backgroundTop = viewportHeight;
         }
@@ -158,7 +183,7 @@ public class MainGame extends ApplicationAdapter {
     private void drawObject() {
 
         //Draw Bullets
-        for (Array.ArrayIterator<AbstractBullet> iterator = heroBullets.iterator(); iterator.hasNext();) {
+        for (Array.ArrayIterator<AbstractBullet> iterator = heroBullets.iterator(); iterator.hasNext(); ) {
             AbstractBullet bullet = iterator.next();
             if (!bullet.notValid()) {
                 batch.draw(bullet.getImage(), bullet.getLocationX(), bullet.getLocationY(), bullet.getWidth(), bullet.getHeight());
@@ -166,7 +191,7 @@ public class MainGame extends ApplicationAdapter {
                 iterator.remove();
             }
         }
-        for (Array.ArrayIterator<AbstractBullet> iterator = enemyBullets.iterator(); iterator.hasNext();) {
+        for (Array.ArrayIterator<AbstractBullet> iterator = enemyBullets.iterator(); iterator.hasNext(); ) {
             AbstractBullet bullet = iterator.next();
             if (!bullet.notValid()) {
                 batch.draw(bullet.getImage(), bullet.getLocationX(), bullet.getLocationY(), bullet.getWidth(), bullet.getHeight());
@@ -175,7 +200,7 @@ public class MainGame extends ApplicationAdapter {
             }
         }
         //Draw Enemy
-        for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext();) {
+        for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext(); ) {
             AbstractAircraft enemy = iterator.next();
             if (!enemy.notValid()) {
                 batch.draw(enemy.getImage(), enemy.getLocationX(), enemy.getLocationY(), enemy.getWidth(), enemy.getHeight());
@@ -188,36 +213,38 @@ public class MainGame extends ApplicationAdapter {
         batch.draw(heroAircraft.getImage(), heroAircraft.getLocationX(), heroAircraft.getLocationY(), heroAircraft.getWidth(), heroAircraft.getHeight());
     }
 
-    private void crashCheck(){
+    private void crashCheck() {
         //check whether hero crashes enemy
-        for(AbstractAircraft enemy :enemyAircrafts){
-            if(enemy.notValid()) {
+        for (AbstractAircraft enemy : enemyAircrafts) {
+            if (enemy.notValid()) {
                 continue;
             }
-            if(enemy.crash(heroAircraft)){
+            if (enemy.crash(heroAircraft)) {
 //                Gdx.app.exit();
                 //TODO
             }
         }
 
         //check whether hero bullets hit enemy
-        for(AbstractBullet bullet : heroBullets) {
-            if(bullet.notValid()) {
+        for (AbstractBullet bullet : heroBullets) {
+            if (bullet.notValid()) {
                 continue;
             }
-            for(AbstractAircraft enemy:enemyAircrafts) {
-                if(enemy.notValid()) {
+            for (AbstractAircraft enemy : enemyAircrafts) {
+                if (enemy.notValid()) {
                     continue;
                 }
-                if(enemy.crash(bullet)) {
+                if (enemy.crash(bullet)) {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
-                    if(enemy.notValid()) {
-                        if(enemy instanceof EliteEnemy) {
+                    if (enemy.notValid()) {
+                        if (enemy instanceof EliteEnemy) {
                             score += 20;
-                        }
-                        else if(enemy instanceof MobEnemy) {
+                        } else if (enemy instanceof MobEnemy) {
                             score += 10;
+                        } else if (enemy instanceof BossEnemy) {
+                            score += 50;
+                            bossExisting = false;
                         }
                     }
                 }
@@ -231,10 +258,10 @@ public class MainGame extends ApplicationAdapter {
         for (AbstractAircraft enemy : enemyAircrafts) {
             enemy.forward();
         }
-        for (AbstractBullet bullet: heroBullets) {
+        for (AbstractBullet bullet : heroBullets) {
             bullet.forward();
         }
-        for (AbstractBullet bullet: enemyBullets) {
+        for (AbstractBullet bullet : enemyBullets) {
             bullet.forward();
         }
         if (Gdx.input.isTouched()) {
