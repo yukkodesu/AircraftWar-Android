@@ -14,7 +14,7 @@ public class EnemyShoot implements ShootStrategy{
         Array<AbstractBullet> res = new Array<>();
         bulletTemplate = new EnemyBullet(0,0,0,0,0);
         float x = abstractAircraft.getLocationX() + abstractAircraft.getWidth()/2 - bulletTemplate.getWidth()/2;
-        float y = abstractAircraft.getLocationY() + abstractAircraft.getHeight()/2;
+        float y = abstractAircraft.getLocationY() + bulletTemplate.getHeight();
         float speedX = 0;
         float speedY = 250;
         AbstractBullet abstractBullet;

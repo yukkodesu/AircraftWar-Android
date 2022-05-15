@@ -15,7 +15,7 @@ public class SprayShoot implements ShootStrategy{
         bulletTemplate =new HeroBullet(0,0,0,0,0);
         int shootnum = abstractAircraft.getShootNum();
         float x = abstractAircraft.getLocationX() + abstractAircraft.getWidth()/2- bulletTemplate.getWidth()/2;
-        float y = abstractAircraft.getLocationY() + abstractAircraft.getHeight()/2;
+        float y = abstractAircraft.getLocationY() + abstractAircraft.getHeight()-bulletTemplate.getHeight();
         float speedX = 0;
         float speedY = 0;
         int speed = 100;

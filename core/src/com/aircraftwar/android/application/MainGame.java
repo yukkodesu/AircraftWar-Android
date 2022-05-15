@@ -3,6 +3,7 @@ package com.aircraftwar.android.application;
 import com.aircraftwar.android.aircraft.AbstractAircraft;
 import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
+import com.aircraftwar.android.aircraft.MobEnemy;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Iterator;
+import java.util.Random;
 
 public class MainGame extends ApplicationAdapter {
     private int score = 0;
@@ -37,6 +39,7 @@ public class MainGame extends ApplicationAdapter {
     private Array<AbstractBullet> heroBullets;
     private Array<AbstractBullet> enemyBullets;
     private final int enemyMaxNumber = 5;
+    private final int eliteRate = 1;
     private long lastEnemyGenTime = 0;
     private long enemyGenDuration = 1000000000;
     private long heroLastShootGenTime = 0;
@@ -80,14 +83,7 @@ public class MainGame extends ApplicationAdapter {
 
 
         //Enemy Generate
-        if (enemyAircrafts.size < enemyMaxNumber && TimeUtils.nanoTime() - lastEnemyGenTime > enemyGenDuration) {
-            lastEnemyGenTime = TimeUtils.nanoTime();
-            enemyAircrafts.add(
-                    new EliteEnemy(
-                            MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth() / 2)),
-                            MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
-                            0, 200, 10));
-        }
+        enemyGenerate();
 
         shootAction();
 
@@ -98,6 +94,28 @@ public class MainGame extends ApplicationAdapter {
         crashCheck();
 
     }
+
+    //Enemy Generate
+    private void enemyGenerate() {
+        if (enemyAircrafts.size < enemyMaxNumber && TimeUtils.nanoTime() - lastEnemyGenTime > enemyGenDuration) {
+            lastEnemyGenTime = TimeUtils.nanoTime();
+            if(new Random().nextInt()%5 < eliteRate) {
+                enemyAircrafts.add(
+                        new EliteEnemy(
+                                MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth() )),
+                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
+                                50, 100, 10));
+            }
+            else {
+                enemyAircrafts.add(
+                        new MobEnemy(
+                                MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                                MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
+                                0, 200, 10));
+            }
+        }
+    }
+
 
     @Override
     public void dispose() {
@@ -138,15 +156,7 @@ public class MainGame extends ApplicationAdapter {
     }
 
     private void drawObject() {
-        //Draw Enemy
-        for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext();) {
-            AbstractAircraft enemy = iterator.next();
-            if (!enemy.notValid()) {
-                batch.draw(enemy.getImage(), enemy.getLocationX(), enemy.getLocationY(), enemy.getWidth(), enemy.getHeight());
-            } else {
-                iterator.remove();
-            }
-        }
+
         //Draw Bullets
         for (Array.ArrayIterator<AbstractBullet> iterator = heroBullets.iterator(); iterator.hasNext();) {
             AbstractBullet bullet = iterator.next();
@@ -164,8 +174,17 @@ public class MainGame extends ApplicationAdapter {
                 iterator.remove();
             }
         }
+        //Draw Enemy
+        for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext();) {
+            AbstractAircraft enemy = iterator.next();
+            if (!enemy.notValid()) {
+                batch.draw(enemy.getImage(), enemy.getLocationX(), enemy.getLocationY(), enemy.getWidth(), enemy.getHeight());
+            } else {
+                iterator.remove();
+            }
+        }
 
-        //Draw Aircraft
+        //Draw Hero
         batch.draw(heroAircraft.getImage(), heroAircraft.getLocationX(), heroAircraft.getLocationY(), heroAircraft.getWidth(), heroAircraft.getHeight());
     }
 
@@ -194,7 +213,12 @@ public class MainGame extends ApplicationAdapter {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if(enemy.notValid()) {
-                        score += 10;
+                        if(enemy instanceof EliteEnemy) {
+                            score += 20;
+                        }
+                        else if(enemy instanceof MobEnemy) {
+                            score += 10;
+                        }
                     }
                 }
             }

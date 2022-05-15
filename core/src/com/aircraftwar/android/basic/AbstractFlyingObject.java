@@ -32,7 +32,7 @@ public abstract class AbstractFlyingObject {
     public void forward() {
         this.rigidObject.x += speedX * Gdx.graphics.getDeltaTime();
         this.rigidObject.y -= speedY * Gdx.graphics.getDeltaTime();
-        if (this.rigidObject.x <= 0 || this.rigidObject.x >= MainGame.viewportWidth) {
+        if (this.rigidObject.x + this.rigidObject.width/2 <= 0 || this.rigidObject.x + this.rigidObject.width/2 >= MainGame.viewportWidth) {
             speedX = -speedX;
         }
         if(this.rigidObject.y + height < 0) {

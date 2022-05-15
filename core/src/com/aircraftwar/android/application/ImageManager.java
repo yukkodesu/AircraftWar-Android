@@ -1,5 +1,6 @@
 package com.aircraftwar.android.application;
 
+import com.aircraftwar.android.aircraft.BossEnemy;
 import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
@@ -31,7 +32,7 @@ public class ImageManager {
     static {
         CLASSNAME_IMAGE_MAP.put(HeroAircraft.class.getName(), HERO_IMAGE);
         CLASSNAME_IMAGE_MAP.put(MobEnemy.class.getName(), MOB_ENEMY_IMAGE);
-//        CLASSNAME_IMAGE_MAP.put(BossEnemy.class.getName(), BOSS_ENEMY_IMAGE);
+        CLASSNAME_IMAGE_MAP.put(BossEnemy.class.getName(), BOSS_ENEMY_IMAGE);
         CLASSNAME_IMAGE_MAP.put(HeroBullet.class.getName(), HERO_BULLET_IMAGE);
         CLASSNAME_IMAGE_MAP.put(EnemyBullet.class.getName(), ENEMY_BULLET_IMAGE);
         CLASSNAME_IMAGE_MAP.put(EliteEnemy.class.getName(), ELITE_ENEMY_IMAGE);
