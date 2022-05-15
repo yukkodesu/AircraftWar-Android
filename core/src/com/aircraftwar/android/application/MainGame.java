@@ -7,10 +7,12 @@ import com.aircraftwar.android.aircraft.MobEnemy;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -24,13 +26,15 @@ import java.util.Random;
 
 public class MainGame extends ApplicationAdapter {
     private int score = 0;
-    private BitmapFont font;
+
+
     private SpriteBatch batch;
     private Texture background;
     public static final int viewportWidth = 512;
     public static final int viewportHeight = 768;
     private OrthographicCamera camera;
     private Viewport viewport;
+    private BitmapFont font24;
     private float backgroundTop;
 
 
@@ -63,9 +67,13 @@ public class MainGame extends ApplicationAdapter {
         enemyAircrafts = new Array<>();
         heroBullets = new Array<>();
         enemyBullets = new Array<>();
-        font = new BitmapFont();
 
-
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Inter-Bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 24;
+        parameter.color = Color.valueOf("e03131");
+        font24 = fontGenerator.generateFont(parameter);
+        fontGenerator.dispose();
     }
 
     @Override
@@ -76,7 +84,7 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         drawBackground();
         drawObject();
-        font.draw(batch, Integer.toString(score),0,viewportHeight-20);
+        font24.draw(batch, "SCORE: " + Integer.toString(score),0,viewportHeight-10);
         batch.end();
 
 
