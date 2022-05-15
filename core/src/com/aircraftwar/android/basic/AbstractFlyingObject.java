@@ -90,4 +90,12 @@ public abstract class AbstractFlyingObject {
         }
         return height;
     }
+
+    public void setSpeedX(float speedX) {
+        this.speedX = speedX;
+    }
+
+    public void setSpeedY(float speedY) {
+        this.speedY = speedY;
+    }
 }
