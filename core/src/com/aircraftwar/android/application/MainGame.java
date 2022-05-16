@@ -6,6 +6,9 @@ import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
 import com.aircraftwar.android.bullet.AbstractBullet;
+import com.aircraftwar.android.prop.PropBlood;
+import com.aircraftwar.android.prop.PropBomb;
+import com.aircraftwar.android.prop.PropBullet;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -43,6 +46,7 @@ public class MainGame extends ApplicationAdapter {
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
     private Array<AbstractBullet> enemyBullets;
+    private Array<AbstractAircraft> props;
     /**
      * the number of boss ever existed
      */
@@ -75,6 +79,7 @@ public class MainGame extends ApplicationAdapter {
         enemyAircrafts = new Array<>();
         heroBullets = new Array<>();
         enemyBullets = new Array<>();
+        props = new Array<>();
 
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Inter-Bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -219,6 +224,16 @@ public class MainGame extends ApplicationAdapter {
 
         //Draw Hero
         batch.draw(heroAircraft.getImage(), heroAircraft.getLocationX(), heroAircraft.getLocationY(), heroAircraft.getWidth(), heroAircraft.getHeight());
+
+        //Draw Props
+        for (Iterator<AbstractAircraft> iterator = props.iterator(); iterator.hasNext(); ) {
+            AbstractAircraft prop = iterator.next();
+            if (!prop.notValid()) {
+                batch.draw(prop.getImage(), prop.getLocationX(), prop.getLocationY(), prop.getWidth(), prop.getHeight());
+            } else {
+                iterator.remove();
+            }
+        }
     }
 
     private void crashCheck() {
@@ -248,17 +263,38 @@ public class MainGame extends ApplicationAdapter {
                     if (enemy.notValid()) {
                         if (enemy instanceof EliteEnemy) {
                             score += 20;
+                            propGeneration(enemy);
                         } else if (enemy instanceof MobEnemy) {
                             score += 10;
                         } else if (enemy instanceof BossEnemy) {
                             score += 50;
                             bossExisting = false;
+                            propGeneration(enemy);
                         }
                     }
                 }
             }
         }
 
+        //check whether hero hits props
+        for (AbstractAircraft prop:props) {
+            if(!prop.notValid()) {
+                if(heroAircraft.crash(prop)) {
+                    if(prop instanceof PropBlood) {
+                        prop.vanish();
+                        //TODO
+                    }
+                    else if(prop instanceof PropBullet) {
+                        prop.vanish();
+                        //TODO
+                    }
+                    else if(prop instanceof PropBomb) {
+                        prop.vanish();
+                        //TODO
+                    }
+                }
+            }
+        }
     }
 
 
@@ -271,6 +307,9 @@ public class MainGame extends ApplicationAdapter {
         }
         for (AbstractBullet bullet : enemyBullets) {
             bullet.forward();
+        }
+        for (AbstractAircraft prop : props) {
+            prop.forward();
         }
         if (Gdx.input.isTouched()) {
             Vector3 touchPos = new Vector3();
@@ -293,7 +332,7 @@ public class MainGame extends ApplicationAdapter {
                 } else {
                     heroAircraft.setSpeedY(-speedYRate * heroSpeed);
                 }
-                if (Math.abs(deltaX) > heroAircraft.getWidth() / 5 || Math.abs(deltaY) > heroAircraft.getHeight() / 5) {
+                if (Math.abs(deltaX) > heroAircraft.getWidth() / 4 || Math.abs(deltaY) > heroAircraft.getHeight() / 4) {
                     heroAircraft.forward();
 
                 }
@@ -302,4 +341,23 @@ public class MainGame extends ApplicationAdapter {
         }
     }
 
+    private void propGeneration(AbstractAircraft aircraft) {
+        int i = MathUtils.random(0, 9);
+        if (i == 0) {
+            props.add(new PropBlood(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200, 20));
+        } else if (i == 1) {
+            props.add(new PropBomb(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200, 20));
+        } else if (i == 2) {
+            props.add(new PropBullet(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200, 20));
+        }
+    }
 }

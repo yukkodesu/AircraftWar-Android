@@ -6,6 +6,9 @@ import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
 import com.aircraftwar.android.bullet.EnemyBullet;
 import com.aircraftwar.android.bullet.HeroBullet;
+import com.aircraftwar.android.prop.PropBlood;
+import com.aircraftwar.android.prop.PropBomb;
+import com.aircraftwar.android.prop.PropBullet;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.HashMap;
@@ -36,9 +39,9 @@ public class ImageManager {
         CLASSNAME_IMAGE_MAP.put(HeroBullet.class.getName(), HERO_BULLET_IMAGE);
         CLASSNAME_IMAGE_MAP.put(EnemyBullet.class.getName(), ENEMY_BULLET_IMAGE);
         CLASSNAME_IMAGE_MAP.put(EliteEnemy.class.getName(), ELITE_ENEMY_IMAGE);
-//        CLASSNAME_IMAGE_MAP.put(BombDropping.class.getName(), BOMB_DROP_IMAGE);
-//        CLASSNAME_IMAGE_MAP.put(BulletDropping.class.getName(), BULLET_DROP_IMAGE);
-//        CLASSNAME_IMAGE_MAP.put(BloodDropping.class.getName(), BLOOD_DROP_IMAGE);
+        CLASSNAME_IMAGE_MAP.put(PropBomb.class.getName(), BOMB_DROP_IMAGE);
+        CLASSNAME_IMAGE_MAP.put(PropBullet.class.getName(), BULLET_DROP_IMAGE);
+        CLASSNAME_IMAGE_MAP.put(PropBlood.class.getName(), BLOOD_DROP_IMAGE);
     }
 
     public static Texture get(String className) {
