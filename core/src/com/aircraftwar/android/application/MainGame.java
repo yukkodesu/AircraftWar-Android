@@ -362,22 +362,22 @@ public class MainGame extends ApplicationAdapter {
     }
 
     private void propGeneration(AbstractAircraft aircraft) {
-//        int i = MathUtils.random(0, 9);
-//        if (i == 0) {
-//            props.add(new PropBlood(
-//                    aircraft.getLocationX(),
-//                    aircraft.getLocationY(),
-//                    0, 200));
-//        } else if (i == 1) {
+        int i = MathUtils.random(0, 9);
+        if (i == 0) {
+            props.add(new PropBlood(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200));
+        } else if (i == 1) {
             props.add(new PropBomb(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
                     0, 200));
-//        } else if (i == 2) {
-//            props.add(new PropBullet(
-//                    aircraft.getLocationX(),
-//                    aircraft.getLocationY(),
-//                    0, 200, 20));
-//        }
+        } else if (i == 2) {
+            props.add(new PropBullet(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200));
+        }
     }
 }
