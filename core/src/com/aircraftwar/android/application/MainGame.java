@@ -115,7 +115,7 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         drawBackground();
         drawObject();
-        font24.draw(batch, "SCORE: " + Integer.toString(score), 0, viewportHeight - 10);
+        font24.draw(batch, "SCORE: " + Integer.toString(score) + "\nLIFE:"+Integer.toString(heroAircraft.getHp()), 0, viewportHeight - 10);
         batch.end();
 
 
