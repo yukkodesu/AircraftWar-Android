@@ -11,6 +11,8 @@ import com.aircraftwar.android.prop.PropBomb;
 import com.aircraftwar.android.prop.PropBullet;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -64,6 +66,12 @@ public class MainGame extends ApplicationAdapter {
     private long bossLastShootGenTime = 0;
     private long bossShootGenDuration = 500000000;
 
+    private Sound bomb_Explosion;
+    private Sound bullet_Hit;
+    private Sound game_Over;
+    private Sound get_Supply;
+    private Music bgm;
+    private Music bgm_Boss;
 
     @Override
     public void create() {
@@ -80,6 +88,16 @@ public class MainGame extends ApplicationAdapter {
         heroBullets = new Array<>();
         enemyBullets = new Array<>();
         props = new Array<>();
+        bomb_Explosion = Gdx.audio.newSound(Gdx.files.internal("musics/bomb_explosion.wav"));
+        bullet_Hit = Gdx.audio.newSound(Gdx.files.internal("musics/bullet_hit.wav"));
+        game_Over = Gdx.audio.newSound(Gdx.files.internal("musics/game_over.wav"));
+        get_Supply = Gdx.audio.newSound(Gdx.files.internal("musics/get_supply.wav"));
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("musics/bgm.wav"));
+        bgm_Boss = Gdx.audio.newMusic(Gdx.files.internal("musics/bgm_boss.wav"));
+
+        bgm.setLooping(true);
+        bgm.setLooping(true);
+        bgm.play();
 
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Inter-Bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -141,6 +159,9 @@ public class MainGame extends ApplicationAdapter {
                                 MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
                                 MathUtils.random((float) (viewportHeight * 0.95), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight() / 2,
                                 100, 0, 100));
+                bgm.pause();
+                bgm_Boss.setPosition(0);
+                bgm_Boss.play();
             }
         }
     }
@@ -260,6 +281,7 @@ public class MainGame extends ApplicationAdapter {
                 if (enemy.crash(bullet)) {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
+                    bullet_Hit.play();
                     if (enemy.notValid()) {
                         if (enemy instanceof EliteEnemy) {
                             score += 20;
@@ -270,6 +292,9 @@ public class MainGame extends ApplicationAdapter {
                             score += 50;
                             bossExisting = false;
                             propGeneration(enemy);
+                            bgm_Boss.pause();
+                            bgm.setPosition(0);
+                            bgm.play();
                         }
                     }
                 }
@@ -282,14 +307,17 @@ public class MainGame extends ApplicationAdapter {
                 if(heroAircraft.crash(prop)) {
                     if(prop instanceof PropBlood) {
                         prop.vanish();
+                        get_Supply.play();
                         //TODO
                     }
                     else if(prop instanceof PropBullet) {
                         prop.vanish();
+                        get_Supply.play();
                         //TODO
                     }
                     else if(prop instanceof PropBomb) {
                         prop.vanish();
+                        bomb_Explosion.play();
                         //TODO
                     }
                 }
