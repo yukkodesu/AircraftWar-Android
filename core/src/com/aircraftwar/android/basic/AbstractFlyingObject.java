@@ -12,8 +12,8 @@ public abstract class AbstractFlyingObject {
     protected float speedX;
     protected float speedY;
     protected Texture image = null;
-    Rectangle rigidObject = null;
-    private boolean isValid = true;
+    protected Rectangle rigidObject = null;
+    protected boolean isValid = true;
 
 
     public AbstractFlyingObject(float locationX, float locationY, float speedX, float speedY) {

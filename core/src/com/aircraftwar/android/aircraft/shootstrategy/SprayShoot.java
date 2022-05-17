@@ -26,9 +26,9 @@ public class SprayShoot implements ShootStrategy{
         if(shootnum % 2 == 1) {
             for (int i = 0; i < shootnum; i++) {
                 if (i % 2 == 1) {
-                    speedX += 1.5;
+                    speedX += 30;
                 }
-                speedY = (float) (direction * Math.pow(speed * speed - speedX * speedX, 0.5));
+                speedY = (float) (direction * Math.sqrt(speed * speed - speedX * speedX));
                 abstractBullet = new HeroBullet(x,
                         y,
                         (float) (Math.pow(-1, i) * speedX),
@@ -38,12 +38,12 @@ public class SprayShoot implements ShootStrategy{
             }
         }
         else {
-            speedX = 0.75F;
+            speedX = 15F;
             for (int i = 0; i < shootnum; i++) {
                 if (i % 2 == 0 && i > 1) {
-                    speedX += 1.5;
+                    speedX += 30;
                 }
-                speedY = (float) (direction * Math.pow(speed * speed - speedX * speedX, 0.5));
+                speedY = (float) (direction * Math.sqrt(speed * speed - speedX * speedX));
                 abstractBullet = new HeroBullet(x,
                         y,
                         (float) (Math.pow(-1, i) * speedX),

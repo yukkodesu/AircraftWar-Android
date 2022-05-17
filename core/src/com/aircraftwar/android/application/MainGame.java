@@ -5,10 +5,13 @@ import com.aircraftwar.android.aircraft.BossEnemy;
 import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
+import com.aircraftwar.android.aircraft.shootstrategy.SprayShoot;
+import com.aircraftwar.android.basic.AbstractFlyingObject;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.aircraftwar.android.prop.PropBlood;
 import com.aircraftwar.android.prop.PropBomb;
 import com.aircraftwar.android.prop.PropBullet;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -24,11 +27,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.TimerTask;
 
 public class MainGame extends ApplicationAdapter {
     private int score = 0;
@@ -48,7 +53,7 @@ public class MainGame extends ApplicationAdapter {
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
     private Array<AbstractBullet> enemyBullets;
-    private Array<AbstractAircraft> props;
+    private Array<AbstractFlyingObject> props;
     /**
      * the number of boss ever existed
      */
@@ -247,8 +252,8 @@ public class MainGame extends ApplicationAdapter {
         batch.draw(heroAircraft.getImage(), heroAircraft.getLocationX(), heroAircraft.getLocationY(), heroAircraft.getWidth(), heroAircraft.getHeight());
 
         //Draw Props
-        for (Iterator<AbstractAircraft> iterator = props.iterator(); iterator.hasNext(); ) {
-            AbstractAircraft prop = iterator.next();
+        for (Iterator<AbstractFlyingObject> iterator = props.iterator(); iterator.hasNext(); ) {
+            AbstractFlyingObject prop = iterator.next();
             if (!prop.notValid()) {
                 batch.draw(prop.getImage(), prop.getLocationX(), prop.getLocationY(), prop.getWidth(), prop.getHeight());
             } else {
@@ -302,23 +307,38 @@ public class MainGame extends ApplicationAdapter {
         }
 
         //check whether hero hits props
-        for (AbstractAircraft prop:props) {
-            if(!prop.notValid()) {
-                if(heroAircraft.crash(prop)) {
-                    if(prop instanceof PropBlood) {
+        for (AbstractFlyingObject prop : props) {
+            if (!prop.notValid()) {
+                if (heroAircraft.crash(prop)) {
+                    if (prop instanceof PropBlood) {
+                        get_Supply.play();
+                        prop.vanish();
+                        heroAircraft.increaseHp(20);
+                    } else if (prop instanceof PropBullet) {
                         prop.vanish();
                         get_Supply.play();
-                        //TODO
-                    }
-                    else if(prop instanceof PropBullet) {
-                        prop.vanish();
-                        get_Supply.play();
-                        //TODO
-                    }
-                    else if(prop instanceof PropBomb) {
+                        heroAircraft.setShootNum(4);
+                        Timer timer = new Timer();
+                        timer.scheduleTask(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                heroAircraft.setShootNum(1);
+                            }
+                        }, 10F, 1F);
+                    } else if (prop instanceof PropBomb) {
                         prop.vanish();
                         bomb_Explosion.play();
-                        //TODO
+                        for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext(); ) {
+                            AbstractAircraft item = iterator.next();
+                            if (!(item instanceof BossEnemy)) {
+                                item.vanish();
+                            }
+                        }
+
+                        for (Iterator<AbstractBullet> iterator = enemyBullets.iterator(); iterator.hasNext(); ) {
+                            AbstractBullet item = iterator.next();
+                            item.vanish();
+                        }
                     }
                 }
             }
@@ -336,7 +356,7 @@ public class MainGame extends ApplicationAdapter {
         for (AbstractBullet bullet : enemyBullets) {
             bullet.forward();
         }
-        for (AbstractAircraft prop : props) {
+        for (AbstractFlyingObject prop : props) {
             prop.forward();
         }
         if (Gdx.input.isTouched()) {
@@ -375,17 +395,17 @@ public class MainGame extends ApplicationAdapter {
             props.add(new PropBlood(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
-                    0, 200, 20));
+                    0, 200));
         } else if (i == 1) {
             props.add(new PropBomb(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
-                    0, 200, 20));
+                    0, 200));
         } else if (i == 2) {
             props.add(new PropBullet(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
-                    0, 200, 20));
+                    0, 200));
         }
     }
 }
