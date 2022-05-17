@@ -77,6 +77,7 @@ public class MainGame extends ApplicationAdapter {
     private Sound get_Supply;
     private Music bgm;
     private Music bgm_Boss;
+    private Timer timer;
 
     @Override
     public void create() {
@@ -99,6 +100,7 @@ public class MainGame extends ApplicationAdapter {
         get_Supply = Gdx.audio.newSound(Gdx.files.internal("musics/get_supply.wav"));
         bgm = Gdx.audio.newMusic(Gdx.files.internal("musics/bgm.wav"));
         bgm_Boss = Gdx.audio.newMusic(Gdx.files.internal("musics/bgm_boss.wav"));
+        timer = new Timer();
 
         bgm.setLooping(true);
         bgm.setLooping(true);
@@ -316,15 +318,15 @@ public class MainGame extends ApplicationAdapter {
                         heroAircraft.increaseHp(20);
                     } else if (prop instanceof PropBullet) {
                         prop.vanish();
+                        timer.clear();
                         get_Supply.play();
                         heroAircraft.setShootNum(4);
-                        Timer timer = new Timer();
                         timer.scheduleTask(new Timer.Task() {
                             @Override
                             public void run() {
                                 heroAircraft.setShootNum(1);
                             }
-                        }, 10F, 1F);
+                        }, 10, 1);
                     } else if (prop instanceof PropBomb) {
                         prop.vanish();
                         bomb_Explosion.play();
@@ -390,22 +392,26 @@ public class MainGame extends ApplicationAdapter {
     }
 
     private void propGeneration(AbstractAircraft aircraft) {
-        int i = MathUtils.random(0, 9);
-        if (i == 0) {
-            props.add(new PropBlood(
-                    aircraft.getLocationX(),
-                    aircraft.getLocationY(),
-                    0, 200));
-        } else if (i == 1) {
-            props.add(new PropBomb(
-                    aircraft.getLocationX(),
-                    aircraft.getLocationY(),
-                    0, 200));
-        } else if (i == 2) {
-            props.add(new PropBullet(
-                    aircraft.getLocationX(),
-                    aircraft.getLocationY(),
-                    0, 200));
-        }
+//        int i = MathUtils.random(0, 9);
+//        if (i == 0) {
+//            props.add(new PropBlood(
+//                    aircraft.getLocationX(),
+//                    aircraft.getLocationY(),
+//                    0, 200));
+//        } else if (i == 1) {
+//            props.add(new PropBomb(
+//                    aircraft.getLocationX(),
+//                    aircraft.getLocationY(),
+//                    0, 200));
+//        } else if (i == 2) {
+//            props.add(new PropBullet(
+//                    aircraft.getLocationX(),
+//                    aircraft.getLocationY(),
+//                    0, 200));
+//        }
+        props.add(new PropBullet(
+                aircraft.getLocationX(),
+                aircraft.getLocationY(),
+                0, 200));
     }
 }
