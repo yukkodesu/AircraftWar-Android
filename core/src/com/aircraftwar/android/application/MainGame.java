@@ -6,6 +6,7 @@ import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
 import com.aircraftwar.android.aircraft.shootstrategy.SprayShoot;
+import com.aircraftwar.android.application.difficulty.Difficulty;
 import com.aircraftwar.android.basic.AbstractFlyingObject;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.aircraftwar.android.prop.PropBlood;
@@ -60,8 +61,8 @@ public class MainGame extends ApplicationAdapter {
     private int bossNumber = 0;
     private boolean bossExisting = false;
     private int bossThreshold = 200;
-    private final int enemyMaxNumber = 5;
-    private final int eliteRate = 1;
+    private int enemyMaxNumber = 5;
+    private int eliteRate = 1;
     private long lastEnemyGenTime = 0;
     private long enemyGenDuration = 1000000000;
     private long heroLastShootGenTime = 0;
@@ -70,6 +71,12 @@ public class MainGame extends ApplicationAdapter {
     private long eliteShootGenDuration = 500000000;
     private long bossLastShootGenTime = 0;
     private long bossShootGenDuration = 500000000;
+    private int mobHp = 10;
+    private int eliteHp = 20;
+    private int bossHp = 200;
+    private int mobSpeedY = 200;
+    private int eliteSpeedY = 100;
+    private Difficulty difficulty;
 
     private Sound bomb_Explosion;
     private Sound bullet_Hit;
@@ -79,6 +86,11 @@ public class MainGame extends ApplicationAdapter {
     private Music bgm_Boss;
     private Timer timer;
 
+    public MainGame(Difficulty difficulty) {
+        this.difficulty = difficulty;
+        setDifficulty(difficulty);
+    }
+    public MainGame() {}
     @Override
     public void create() {
         //Initialize
@@ -414,4 +426,18 @@ public class MainGame extends ApplicationAdapter {
                 aircraft.getLocationY(),
                 0, 200));
     }
+
+    private void setDifficulty(Difficulty difficulty) {
+        enemyMaxNumber = difficulty.enemyMaxNumber;
+        eliteRate = difficulty.eliteRate;
+        heroShootGenDuration = difficulty.heroShootGenDuration;
+        eliteShootGenDuration = difficulty.eliteShootGenDuration;
+        bossShootGenDuration = difficulty.bossShootGenDuration;
+        mobHp = difficulty.mobHp;
+        eliteHp = difficulty.eliteHp;
+        bossHp = difficulty.bossHp;
+        mobSpeedY = difficulty.mobSpeedY;
+        eliteSpeedY = difficulty.eliteSpeedY;
+    }
 }
+
