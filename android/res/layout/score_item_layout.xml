@@ -47,7 +47,7 @@
         <TextView
             android:id="@+id/scoreTextView3"
             android:layout_width="150dp"
-            android:layout_height="24dp"
+            android:layout_height="22dp"
             android:text="2022-05-20 18:00:00"
             android:textColor="#212529"
             android:textSize="16sp"
