@@ -10,4 +10,8 @@ class CommunicationImpl(private val mActivity : AndroidLauncher) : Communication
         intent.putExtra("score",score)
         mActivity.startActivity(intent)
     }
+
+    override fun gameEnd() {
+        mActivity.finish()
+    }
 }

@@ -289,7 +289,7 @@ public class MainGame extends ApplicationAdapter {
             if (enemy.crash(heroAircraft)) {
                 // TODO
                 communicationInterface.goRankListActivityAndGetName(score);
-                Gdx.app.exit();
+                communicationInterface.gameEnd();
             }
         }
 
