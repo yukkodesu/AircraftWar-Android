@@ -38,9 +38,12 @@ import java.util.TimerTask;
 
 public class MainGame extends ApplicationAdapter {
 
-    public MainGame(CommunicationInterface communicationInterface){
+    public MainGame(CommunicationInterface communicationInterface,Difficulty difficulty){
         this.communicationInterface = communicationInterface;
+        this.difficulty = difficulty;
+        setDifficulty(difficulty);
     }
+
 
     private CommunicationInterface communicationInterface;
     private SpriteBatch batch;
@@ -90,11 +93,7 @@ public class MainGame extends ApplicationAdapter {
     private Music bgm_Boss;
     private Timer timer;
 
-    public MainGame(Difficulty difficulty) {
-        this.difficulty = difficulty;
-        setDifficulty(difficulty);
-    }
-    public MainGame() {}
+
     @Override
     public void create() {
         //Initialize
@@ -409,27 +408,27 @@ public class MainGame extends ApplicationAdapter {
     }
 
     private void propGeneration(AbstractAircraft aircraft) {
-//        int i = MathUtils.random(0, 9);
-//        if (i == 0) {
-//            props.add(new PropBlood(
-//                    aircraft.getLocationX(),
-//                    aircraft.getLocationY(),
-//                    0, 200));
-//        } else if (i == 1) {
-//            props.add(new PropBomb(
-//                    aircraft.getLocationX(),
-//                    aircraft.getLocationY(),
-//                    0, 200));
-//        } else if (i == 2) {
-//            props.add(new PropBullet(
-//                    aircraft.getLocationX(),
-//                    aircraft.getLocationY(),
-//                    0, 200));
-//        }
-        props.add(new PropBullet(
-                aircraft.getLocationX(),
-                aircraft.getLocationY(),
-                0, 200));
+        int i = MathUtils.random(0, 9);
+        if (i == 0) {
+            props.add(new PropBlood(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200));
+        } else if (i == 1) {
+            props.add(new PropBomb(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200));
+        } else if (i == 2) {
+            props.add(new PropBullet(
+                    aircraft.getLocationX(),
+                    aircraft.getLocationY(),
+                    0, 200));
+        }
+//        props.add(new PropBullet(
+//                aircraft.getLocationX(),
+//                aircraft.getLocationY(),
+//                0, 200));
     }
 
     private void setDifficulty(Difficulty difficulty) {

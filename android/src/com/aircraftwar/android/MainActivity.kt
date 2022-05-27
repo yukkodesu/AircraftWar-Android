@@ -24,9 +24,25 @@ class MainActivity : AppCompatActivity() {
         binding.simpleButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
                 val intent = Intent(v.context,AndroidLauncher::class.java)
+                intent.putExtra("Difficulty",1)
                 startActivity(intent)
             }
         })
 
+        binding.middleButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                val intent = Intent(v.context,AndroidLauncher::class.java)
+                intent.putExtra("Difficulty",2)
+                startActivity(intent)
+            }
+        })
+
+        binding.hardButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                val intent = Intent(v.context,AndroidLauncher::class.java)
+                intent.putExtra("Difficulty",3)
+                startActivity(intent)
+            }
+        })
     }
 }
