@@ -36,9 +36,12 @@ import java.util.Random;
 import java.util.TimerTask;
 
 public class MainGame extends ApplicationAdapter {
-    private int score = 0;
 
+    public MainGame(CommunicationInterface communicationInterface){
+        this.communicationInterface = communicationInterface;
+    }
 
+    private CommunicationInterface communicationInterface;
     private SpriteBatch batch;
     private Texture background;
     public static final int viewportWidth = 512;
@@ -48,6 +51,7 @@ public class MainGame extends ApplicationAdapter {
     private BitmapFont font24;
     private float backgroundTop;
 
+    private int score = 0;
     private int heroSpeed = 1000;
     private HeroAircraft heroAircraft;
     private Array<AbstractAircraft> enemyAircrafts;
@@ -271,8 +275,9 @@ public class MainGame extends ApplicationAdapter {
                 continue;
             }
             if (enemy.crash(heroAircraft)) {
-//                Gdx.app.exit();
-                //TODO
+                // TODO
+                communicationInterface.goRankListActivityAndGetName(score);
+                Gdx.app.exit();
             }
         }
 
