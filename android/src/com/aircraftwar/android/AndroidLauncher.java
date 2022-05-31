@@ -18,6 +18,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
 		int difficulty = getIntent().getIntExtra("Difficulty",1);
 		if(difficulty == 1){
 			initialize(new MainGame(new CommunicationImpl(this),new Simple()), config);

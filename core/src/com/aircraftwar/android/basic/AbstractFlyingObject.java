@@ -5,6 +5,7 @@ import com.aircraftwar.android.application.ImageManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.sun.tools.javac.Main;
 
 public abstract class AbstractFlyingObject {
     protected int height = -1;
@@ -14,11 +15,13 @@ public abstract class AbstractFlyingObject {
     protected Texture image = null;
     protected Rectangle rigidObject = null;
     protected boolean isValid = true;
+    protected ImageManager imageManager;
 
 
-    public AbstractFlyingObject(float locationX, float locationY, float speedX, float speedY) {
+    public AbstractFlyingObject(float locationX, float locationY, float speedX, float speedY,ImageManager imageManager) {
         this.speedX = speedX;
         this.speedY = speedY;
+        this.imageManager = imageManager;
         getImage();
         getWidth();
         getHeight();
@@ -67,7 +70,7 @@ public abstract class AbstractFlyingObject {
 
     public Texture getImage() {
         if (image == null) {
-            image = ImageManager.get(this);
+            image = imageManager.get(this);
         }
         return image;
     }
@@ -78,7 +81,7 @@ public abstract class AbstractFlyingObject {
 
     public int getWidth() {
         if (width == -1) {
-            width = ImageManager.get(this).getWidth();
+            width = imageManager.get(this).getWidth();
         }
         return width;
     }
@@ -86,7 +89,7 @@ public abstract class AbstractFlyingObject {
 
     public int getHeight() {
         if (height == -1) {
-            height = ImageManager.get(this).getHeight();
+            height = imageManager.get(this).getHeight();
         }
         return height;
     }

@@ -1,6 +1,7 @@
 package com.aircraftwar.android.aircraft;
 
 import com.aircraftwar.android.aircraft.shootstrategy.ShootStrategy;
+import com.aircraftwar.android.application.ImageManager;
 import com.aircraftwar.android.basic.AbstractFlyingObject;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.badlogic.gdx.utils.Array;
@@ -13,8 +14,8 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
     protected int power;
     protected ShootStrategy shootStrategy;
 
-    public AbstractAircraft(float locationX, float locationY, float speedX, float speedY, int hp) {
-        super(locationX, locationY, speedX, speedY);
+    public AbstractAircraft(float locationX, float locationY, float speedX, float speedY, int hp, ImageManager imageManager) {
+        super(locationX, locationY, speedX, speedY, imageManager);
         this.hp = hp;
         this.maxHp = hp;
         this.shootNum = 1;
@@ -67,7 +68,7 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
 
     public Array<AbstractBullet> shoot(){
         return shootStrategy.shoot(this);
-    };
+    }
 
 
 //    public abstract List<AbstractBullet> shoot();

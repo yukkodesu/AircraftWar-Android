@@ -38,14 +38,14 @@ import java.util.TimerTask;
 
 public class MainGame extends ApplicationAdapter {
 
-    public MainGame(CommunicationInterface communicationInterface,Difficulty difficulty){
+    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty) {
         this.communicationInterface = communicationInterface;
         this.difficulty = difficulty;
         setDifficulty(difficulty);
     }
 
-
-    private CommunicationInterface communicationInterface;
+    public ImageManager imageManager;
+    private final CommunicationInterface communicationInterface;
     private SpriteBatch batch;
     private Texture background;
     public static final int viewportWidth = 512;
@@ -56,7 +56,7 @@ public class MainGame extends ApplicationAdapter {
     private float backgroundTop;
 
     private int score = 0;
-    private int heroSpeed = 1000;
+    private final int heroSpeed = 1000;
     private HeroAircraft heroAircraft;
     private Array<AbstractAircraft> enemyAircrafts;
     private Array<AbstractBullet> heroBullets;
@@ -67,11 +67,11 @@ public class MainGame extends ApplicationAdapter {
      */
     private int bossNumber = 0;
     private boolean bossExisting = false;
-    private int bossThreshold = 200;
+    private final int bossThreshold = 200;
     private int enemyMaxNumber = 5;
     private int eliteRate = 1;
     private long lastEnemyGenTime = 0;
-    private long enemyGenDuration = 1000000000;
+    private final long enemyGenDuration = 1000000000;
     private long heroLastShootGenTime = 0;
     private long heroShootGenDuration = 500000000;
     private long eliteLastShootGenTime = 0;
@@ -83,7 +83,7 @@ public class MainGame extends ApplicationAdapter {
     private int bossHp = 200;
     private int mobSpeedY = 200;
     private int eliteSpeedY = 100;
-    private Difficulty difficulty;
+    private final Difficulty difficulty;
 
     private Sound bomb_Explosion;
     private Sound bullet_Hit;
@@ -97,13 +97,14 @@ public class MainGame extends ApplicationAdapter {
     @Override
     public void create() {
         //Initialize
+        imageManager = new ImageManager();
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, viewportWidth, viewportHeight);
         viewport = new ExtendViewport(viewportWidth, viewportHeight, camera);
-        background = ImageManager.BACKGROUND_IMAGE;
+        background = imageManager.BACKGROUND_IMAGE;
         backgroundTop = viewportHeight;
-        heroAircraft = new HeroAircraft(0, 0, 0, 0, 100);
+        heroAircraft = new HeroAircraft(0, 0, 0, 0, 100, imageManager);
         heroAircraft.setLocation(viewportWidth / 2 - heroAircraft.getWidth() / 2, 0);
         enemyAircrafts = new Array<>();
         heroBullets = new Array<>();
@@ -137,7 +138,7 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         drawBackground();
         drawObject();
-        font24.draw(batch, "SCORE: " + Integer.toString(score) + "\nLIFE:"+Integer.toString(heroAircraft.getHp()), 0, viewportHeight - 10);
+        font24.draw(batch, "SCORE: " + score + "\nLIFE:" + heroAircraft.getHp(), 0, viewportHeight - 10);
         batch.end();
 
 
@@ -162,15 +163,15 @@ public class MainGame extends ApplicationAdapter {
                 if (MathUtils.random(1, 5) <= eliteRate) {
                     enemyAircrafts.add(
                             new EliteEnemy(
-                                    MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.ELITE_ENEMY_IMAGE.getWidth())),
+                                    MathUtils.random((float) 0, (float) (viewportWidth - imageManager.ELITE_ENEMY_IMAGE.getWidth())),
                                     MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
-                                    100, 100, 20));
+                                    100, 100, 20, imageManager));
                 } else {
                     enemyAircrafts.add(
                             new MobEnemy(
-                                    MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                                    MathUtils.random((float) 0, (float) (viewportWidth - imageManager.MOB_ENEMY_IMAGE.getWidth())),
                                     MathUtils.random((float) (viewportHeight * 0.8), (float) viewportHeight),
-                                    0, 200, 10));
+                                    0, 200, 10, imageManager));
                 }
             }
             if (score / bossThreshold > bossNumber && bossExisting == false) {
@@ -178,9 +179,9 @@ public class MainGame extends ApplicationAdapter {
                 bossExisting = true;
                 enemyAircrafts.add(
                         new BossEnemy(
-                                MathUtils.random((float) 0, (float) (viewportWidth - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
-                                MathUtils.random((float) (viewportHeight * 0.95), (float) viewportHeight) - ImageManager.BOSS_ENEMY_IMAGE.getHeight() / 2,
-                                100, 0, 100));
+                                MathUtils.random((float) 0, (float) (viewportWidth - imageManager.BOSS_ENEMY_IMAGE.getWidth())),
+                                MathUtils.random((float) (viewportHeight * 0.95), (float) viewportHeight) - imageManager.BOSS_ENEMY_IMAGE.getHeight() / 2,
+                                100, 0, 100, imageManager));
                 bgm.pause();
                 bgm_Boss.setPosition(0);
                 bgm_Boss.play();
@@ -191,8 +192,8 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        background.dispose();
         batch.dispose();
+        imageManager.dipose();
     }
 
     //shoot
@@ -287,6 +288,7 @@ public class MainGame extends ApplicationAdapter {
             }
             if (enemy.crash(heroAircraft)) {
                 // TODO
+                imageManager.dipose();
                 communicationInterface.goRankListActivityAndGetName(score);
                 communicationInterface.gameEnd();
             }
@@ -413,17 +415,17 @@ public class MainGame extends ApplicationAdapter {
             props.add(new PropBlood(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
-                    0, 200));
+                    0, 200, imageManager));
         } else if (i == 1) {
             props.add(new PropBomb(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
-                    0, 200));
+                    0, 200, imageManager));
         } else if (i == 2) {
             props.add(new PropBullet(
                     aircraft.getLocationX(),
                     aircraft.getLocationY(),
-                    0, 200));
+                    0, 200, imageManager));
         }
 //        props.add(new PropBullet(
 //                aircraft.getLocationX(),

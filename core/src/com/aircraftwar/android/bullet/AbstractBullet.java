@@ -1,6 +1,7 @@
 package com.aircraftwar.android.bullet;
 
 import com.aircraftwar.android.aircraft.AbstractAircraft;
+import com.aircraftwar.android.application.ImageManager;
 import com.aircraftwar.android.application.MainGame;
 import com.aircraftwar.android.basic.AbstractFlyingObject;
 import com.badlogic.gdx.Gdx;
@@ -9,8 +10,8 @@ public class AbstractBullet extends AbstractFlyingObject {
 
     private int power = 10;
 
-    public AbstractBullet(float locationX, float locationY, float speedX, float speedY, int power) {
-        super(locationX, locationY, speedX, speedY);
+    public AbstractBullet(float locationX, float locationY, float speedX, float speedY, int power, ImageManager imageManager) {
+        super(locationX, locationY, speedX, speedY,imageManager);
         this.power = power;
     }
 
