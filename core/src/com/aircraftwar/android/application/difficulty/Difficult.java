@@ -4,9 +4,9 @@ public class Difficult extends Difficulty{
     public Difficult() {
         enemyMaxNumber = 5;
         eliteRate = 1;
-        heroShootGenDuration = 1000000000;
-        eliteShootGenDuration = 800000000;
-        bossShootGenDuration = 800000000;
+        heroShootGenDuration = 800000000;
+        eliteShootGenDuration = 500000000;
+        bossShootGenDuration = 500000000;
         mobHp = 20;
         eliteHp = 30;
         bossHp = 600;

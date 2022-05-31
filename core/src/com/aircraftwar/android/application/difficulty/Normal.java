@@ -4,9 +4,9 @@ public class Normal extends Difficulty{
     public Normal() {
         enemyMaxNumber = 5;
         eliteRate = 1;
-        heroShootGenDuration = 1000000000;
-        eliteShootGenDuration = 700000000;
-        bossShootGenDuration = 700000000;
+        heroShootGenDuration = 900000000;
+        eliteShootGenDuration = 500000000;
+        bossShootGenDuration = 500000000;
         mobHp = 10;
         eliteHp = 30;
         bossHp = 400;
