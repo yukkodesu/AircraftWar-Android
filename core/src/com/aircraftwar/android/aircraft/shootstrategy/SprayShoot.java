@@ -2,19 +2,21 @@ package com.aircraftwar.android.aircraft.shootstrategy;
 
 import com.aircraftwar.android.aircraft.AbstractAircraft;
 import com.aircraftwar.android.application.ImageManager;
+import com.aircraftwar.android.application.MainGame;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.aircraftwar.android.bullet.HeroBullet;
 import com.badlogic.gdx.utils.Array;
 
 public class SprayShoot implements ShootStrategy{
 
-    private int direction = -1;
+    private final int direction = -1;
     private int bulletHeight;
     private int bulletWidth;
+    private final ImageManager imageManager = new ImageManager();
     @Override
     public Array<AbstractBullet> shoot(AbstractAircraft abstractAircraft) {
-        bulletHeight = ImageManager.HERO_BULLET_IMAGE.getHeight();
-        bulletWidth = ImageManager.HERO_BULLET_IMAGE.getWidth();
+        bulletHeight = imageManager.HERO_BULLET_IMAGE.getHeight();
+        bulletWidth = imageManager.HERO_BULLET_IMAGE.getWidth();
         Array<AbstractBullet> res = new Array<>();
         int shootnum = abstractAircraft.getShootNum();
         float x = abstractAircraft.getLocationX() + abstractAircraft.getWidth()/2- bulletWidth/2;
@@ -33,7 +35,7 @@ public class SprayShoot implements ShootStrategy{
                         y,
                         (float) (Math.pow(-1, i) * speedX),
                         speedY,
-                        abstractAircraft.getPower());
+                        abstractAircraft.getPower(),imageManager);
                 res.add(abstractBullet);
             }
         }
@@ -48,7 +50,7 @@ public class SprayShoot implements ShootStrategy{
                         y,
                         (float) (Math.pow(-1, i) * speedX),
                         speedY,
-                        abstractAircraft.getPower());
+                        abstractAircraft.getPower(),imageManager);
                 res.add(abstractBullet);
             }
         }

@@ -13,6 +13,6 @@ public abstract class Difficulty {
     public int mobSpeedY = 200;
     public int eliteSpeedY = 100;
 
-    public Difficulty(){};
+    public Difficulty(){}
 }
 
