@@ -32,6 +32,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.TimerTask;
@@ -92,6 +93,8 @@ public class MainGame extends ApplicationAdapter {
     private Music bgm;
     private Music bgm_Boss;
     private Timer timer;
+    private InfoSender infoSender;
+    private Long lastSend = 0L;
 
 
     @Override
@@ -116,10 +119,13 @@ public class MainGame extends ApplicationAdapter {
         bgm = Gdx.audio.newMusic(Gdx.files.internal("musics/bgm.wav"));
         bgm_Boss = Gdx.audio.newMusic(Gdx.files.internal("musics/bgm_boss.wav"));
         timer = new Timer();
-
         bgm.setLooping(true);
         bgm.setLooping(true);
         bgm.play();
+
+        infoSender = new InfoSender();
+        infoSender.connect();
+
 
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Inter-Bold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -140,7 +146,6 @@ public class MainGame extends ApplicationAdapter {
         font24.draw(batch, "SCORE: " + Integer.toString(score) + "\nLIFE:"+Integer.toString(heroAircraft.getHp()), 0, viewportHeight - 10);
         batch.end();
 
-
         //Enemy Generate
         enemyGenerate();
 
@@ -152,6 +157,11 @@ public class MainGame extends ApplicationAdapter {
         //Crash check
         crashCheck();
 
+        //Net Action
+        if(TimeUtils.nanoTime() - lastSend >= 300000000){
+            lastSend = TimeUtils.nanoTime();
+            infoSender.send(Integer.toString(score));
+        }
     }
 
     //Enemy Generate
@@ -191,7 +201,6 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        background.dispose();
         batch.dispose();
     }
 
