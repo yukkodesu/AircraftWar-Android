@@ -2,6 +2,7 @@ package com.aircraftwar.android.db
 
 import android.content.Context
 import android.util.Log
+import com.aircraftwar.android.application.datahandle.Score
 import java.io.*
 import java.util.ArrayList
 

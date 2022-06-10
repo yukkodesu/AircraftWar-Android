@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.aircraftwar.android.application.datahandle.Score
 import com.aircraftwar.android.databinding.ActivityRankListBinding
 import com.aircraftwar.android.db.*
 
@@ -33,7 +33,13 @@ class RankListActivity : AppCompatActivity() {
             builder.setPositiveButton("确认", object : DialogInterface.OnClickListener {
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     Log.d("Alert", "Okay")
-                    scoreDb.add(Score(System.currentTimeMillis(),editText.text.toString(),score))
+                    scoreDb.add(
+                        Score(
+                            System.currentTimeMillis(),
+                            editText.text.toString(),
+                            score
+                        )
+                    )
                     scoreDb.writeFile()
                     adapter.notifyDataSetChanged()
                 }

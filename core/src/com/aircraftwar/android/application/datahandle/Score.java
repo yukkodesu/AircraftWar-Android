@@ -1,4 +1,4 @@
-package com.aircraftwar.android.db;
+package com.aircraftwar.android.application.datahandle;
 
 import java.io.Serializable;
 

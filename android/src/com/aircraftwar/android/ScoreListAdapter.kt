@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aircraftwar.android.databinding.ScoreItemLayoutBinding
-import com.aircraftwar.android.db.Score
+import com.aircraftwar.android.application.datahandle.Score
 import java.util.*
 
 class ScoreListAdapter(val context : Context, private val scores : List<Score>) : RecyclerView.Adapter<ScoreListAdapter.ViewHolder>() {

@@ -1,4 +1,4 @@
-package com.aircraftwar.android.application;
+package com.aircraftwar.android.application.datahandle;
 
 import com.badlogic.gdx.Gdx;
 
@@ -16,7 +16,7 @@ public class InfoSender {
     private Socket socket;
     private PrintWriter writer;
 
-    void connect(){
+    public void connect(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -35,7 +35,7 @@ public class InfoSender {
         }).start();
     }
 
-    void send(String str){
+    public void send(String str){
         if(writer != null && true){
             new Thread(new Runnable() {
                 @Override

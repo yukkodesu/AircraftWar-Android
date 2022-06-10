@@ -5,14 +5,13 @@ import com.aircraftwar.android.aircraft.BossEnemy;
 import com.aircraftwar.android.aircraft.EliteEnemy;
 import com.aircraftwar.android.aircraft.HeroAircraft;
 import com.aircraftwar.android.aircraft.MobEnemy;
-import com.aircraftwar.android.aircraft.shootstrategy.SprayShoot;
+import com.aircraftwar.android.application.datahandle.InfoSender;
 import com.aircraftwar.android.application.difficulty.Difficulty;
 import com.aircraftwar.android.basic.AbstractFlyingObject;
 import com.aircraftwar.android.bullet.AbstractBullet;
 import com.aircraftwar.android.prop.PropBlood;
 import com.aircraftwar.android.prop.PropBomb;
 import com.aircraftwar.android.prop.PropBullet;
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -32,10 +31,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.Random;
-import java.util.TimerTask;
 
 public class MainGame extends ApplicationAdapter {
 
@@ -159,7 +155,7 @@ public class MainGame extends ApplicationAdapter {
         crashCheck();
 
         //Net Action
-        if(TimeUtils.nanoTime() - lastSend >= 300000000){
+        if(TimeUtils.nanoTime() - lastSend >= 30000000){
             lastSend = TimeUtils.nanoTime();
             infoSender.send(Integer.toString(score));
         }
