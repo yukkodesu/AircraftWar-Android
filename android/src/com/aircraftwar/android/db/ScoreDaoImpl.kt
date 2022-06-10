@@ -3,20 +3,33 @@ package com.aircraftwar.android.db
 import android.content.Context
 import android.util.Log
 import com.aircraftwar.android.application.datahandle.Score
+import com.aircraftwar.android.application.datahandle.ScoreSyncer
 import java.io.*
 import java.util.ArrayList
 
 class ScoreDaoImpl(private val context: Context) : ScoreDao {
 
     private val f = File(this.context.filesDir, "scoreData.ser")
-    private val scores = ArrayList<Score>()
+    private var scores = ArrayList<Score>()
+
 
     private var fi: FileInputStream? = null
     private var fo: FileOutputStream? = null
 
     init {
         readFile()
+        syncWithServer()
         printAllScores()
+    }
+
+    fun syncWithServer(){
+        val syncer = ScoreSyncer()
+        Thread(Runnable {
+            val scoreNew = syncer.syncScore(scores)
+            if(scoreNew != null){
+                scores = scoreNew as ArrayList<Score>
+            }
+        })
     }
 
     override fun findById(uid: Long): ArrayList<Score> {

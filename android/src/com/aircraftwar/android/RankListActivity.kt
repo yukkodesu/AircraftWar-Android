@@ -40,6 +40,7 @@ class RankListActivity : AppCompatActivity() {
                             score
                         )
                     )
+                    scoreDb.syncWithServer()
                     scoreDb.writeFile()
                     adapter.notifyDataSetChanged()
                 }
