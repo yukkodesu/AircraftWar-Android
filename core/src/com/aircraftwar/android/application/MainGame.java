@@ -155,7 +155,7 @@ public class MainGame extends ApplicationAdapter {
         crashCheck();
 
         //Net Action
-        if(TimeUtils.nanoTime() - lastSend >= 30000000){
+        if(TimeUtils.nanoTime() - lastSend >= 300000000){
             lastSend = TimeUtils.nanoTime();
             infoSender.send(Integer.toString(score));
         }

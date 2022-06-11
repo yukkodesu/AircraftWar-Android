@@ -24,12 +24,10 @@ class ScoreDaoImpl(private val context: Context) : ScoreDao {
 
     fun syncWithServer(){
         val syncer = ScoreSyncer()
-        Thread(Runnable {
-            val scoreNew = syncer.syncScore(scores)
-            if(scoreNew != null){
+        val scoreNew = syncer.syncScore(scores)
+        if(scoreNew != null){
                 scores = scoreNew as ArrayList<Score>
-            }
-        })
+        }
     }
 
     override fun findById(uid: Long): ArrayList<Score> {

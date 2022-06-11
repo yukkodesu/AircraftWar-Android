@@ -23,7 +23,7 @@ public class ScoreSyncer {
                 //运行时修改成服务器的IP
                 try {
                     socket.connect(new InetSocketAddress
-                            ("10.0.2.2", 10080), 5000);
+                            ("192.168.3.106", 10086), 5000);
 
                     ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
                     objOut.writeObject(scores);
