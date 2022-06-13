@@ -28,6 +28,14 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+        binding.OnlineButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                val intent = Intent(v.context,AndroidLauncher::class.java)
+                intent.putExtra("Difficulty",1)
+                intent.putExtra("isOnline",true)
+                startActivity(intent)
+            }
+        })
 
         binding.middleButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {

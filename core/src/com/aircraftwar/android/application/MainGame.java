@@ -31,13 +31,15 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 public class MainGame extends ApplicationAdapter {
 
-    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty) {
+    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty,boolean isOnline) {
         this.communicationInterface = communicationInterface;
         this.difficulty = difficulty;
+        this.isOnline = isOnline;
         setDifficulty(difficulty);
     }
 
@@ -90,6 +92,8 @@ public class MainGame extends ApplicationAdapter {
     private Music bgm_Boss;
     private Timer timer;
     private InfoSender infoSender;
+    private boolean isOnline = false;
+    private int playerTwoScore = 0;
     private Long lastSend = 0L;
 
 
@@ -121,7 +125,9 @@ public class MainGame extends ApplicationAdapter {
         bgm.play();
 
         infoSender = new InfoSender();
-        infoSender.connect();
+        if(isOnline){
+            infoSender.connect();
+        }
 
 
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Inter-Bold.ttf"));
@@ -140,7 +146,10 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         drawBackground();
         drawObject();
-        font24.draw(batch, "SCORE: " + score + "\nLIFE:" + heroAircraft.getHp(), 0, viewportHeight - 10);
+        font24.draw(batch, "SCORE: " + score + "\nLIFE:" + heroAircraft.getHp(), 5, viewportHeight - 10);
+        if(isOnline){
+            font24.draw(batch, "PLAYER2 SCORE: " + playerTwoScore, 5, viewportHeight - 75);
+        }
         batch.end();
 
         //Enemy Generate
@@ -152,12 +161,24 @@ public class MainGame extends ApplicationAdapter {
         objectMove();
 
         //Crash check
-        crashCheck();
+        try {
+            crashCheck();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //Net Action
-        if(TimeUtils.nanoTime() - lastSend >= 300000000){
+        if (isOnline && TimeUtils.nanoTime() - lastSend >= 300000000) {
             lastSend = TimeUtils.nanoTime();
             infoSender.send(Integer.toString(score));
+            try {
+                String tmp = infoSender.get();
+                if (tmp != null && !tmp.equals("end") && !tmp.equals("-1")) {
+                    playerTwoScore = Integer.parseInt(tmp);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -286,7 +307,14 @@ public class MainGame extends ApplicationAdapter {
         }
     }
 
-    private void crashCheck() {
+    private void GameEnd() {
+        imageManager.dipose();
+        communicationInterface.goRankListActivityAndGetName(score);
+        communicationInterface.gameEnd();
+
+    }
+
+    private void crashCheck() throws IOException {
         //check whether hero crashes enemy
         for (AbstractAircraft enemy : enemyAircrafts) {
             if (enemy.notValid()) {
@@ -294,9 +322,8 @@ public class MainGame extends ApplicationAdapter {
             }
             if (enemy.crash(heroAircraft)) {
                 // TODO
-                imageManager.dipose();
-                communicationInterface.goRankListActivityAndGetName(score);
-                communicationInterface.gameEnd();
+                infoSender.send("end");
+                GameEnd();
             }
         }
 
@@ -440,16 +467,16 @@ public class MainGame extends ApplicationAdapter {
     }
 
     private void setDifficulty(Difficulty difficulty) {
-        enemyMaxNumber = difficulty.enemyMaxNumber;
-        eliteRate = difficulty.eliteRate;
-        heroShootGenDuration = difficulty.heroShootGenDuration;
-        eliteShootGenDuration = difficulty.eliteShootGenDuration;
-        bossShootGenDuration = difficulty.bossShootGenDuration;
-        mobHp = difficulty.mobHp;
-        eliteHp = difficulty.eliteHp;
-        bossHp = difficulty.bossHp;
-        mobSpeedY = difficulty.mobSpeedY;
-        eliteSpeedY = difficulty.eliteSpeedY;
+        this.enemyMaxNumber = difficulty.enemyMaxNumber;
+        this.eliteRate = difficulty.eliteRate;
+        this.heroShootGenDuration = difficulty.heroShootGenDuration;
+        this.eliteShootGenDuration = difficulty.eliteShootGenDuration;
+        this.bossShootGenDuration = difficulty.bossShootGenDuration;
+        this.mobHp = difficulty.mobHp;
+        this.eliteHp = difficulty.eliteHp;
+        this.bossHp = difficulty.bossHp;
+        this.mobSpeedY = difficulty.mobSpeedY;
+        this.eliteSpeedY = difficulty.eliteSpeedY;
     }
 }
 

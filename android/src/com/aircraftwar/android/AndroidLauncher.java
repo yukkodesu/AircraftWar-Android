@@ -14,20 +14,19 @@ import com.aircraftwar.android.application.MainGame;
 
 public class AndroidLauncher extends AndroidApplication {
 
-	@Override
-	protected void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
-		int difficulty = getIntent().getIntExtra("Difficulty",1);
-		if(difficulty == 1){
-			initialize(new MainGame(new CommunicationImpl(this),new Simple()), config);
-		}
-		else if(difficulty == 2){
-			initialize(new MainGame(new CommunicationImpl(this),new Normal()), config);
-		}
-		else if(difficulty == 3){
-			initialize(new MainGame(new CommunicationImpl(this),new Difficult()), config);
-		}
-	}
+        int difficulty = getIntent().getIntExtra("Difficulty", 1);
+        boolean isOnline = getIntent().getBooleanExtra("isOnline", false);
+        if (difficulty == 1) {
+            initialize(new MainGame(new CommunicationImpl(this), new Simple(), isOnline), config);
+        } else if (difficulty == 2) {
+            initialize(new MainGame(new CommunicationImpl(this), new Normal(), isOnline), config);
+        } else if (difficulty == 3) {
+            initialize(new MainGame(new CommunicationImpl(this), new Difficult(), isOnline), config);
+        }
+    }
 }

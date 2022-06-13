@@ -7,6 +7,7 @@
     <string name="middleButton">中等</string>
     <string name="hardButton">困难</string>
     <string name="scoreButton">显示排行榜</string>
+    <string name="OnlineButton">在线对战</string>
     <string name="rankList">排行榜</string>
     <string name="alertDialogTitle">输入用户名</string>
 
