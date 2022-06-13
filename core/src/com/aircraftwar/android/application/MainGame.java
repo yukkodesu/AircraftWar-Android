@@ -21,7 +21,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -36,7 +36,7 @@ import java.util.Iterator;
 
 public class MainGame extends ApplicationAdapter {
 
-    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty,boolean isOnline,boolean isAudioOn) {
+    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty, boolean isOnline, boolean isAudioOn) {
         this.communicationInterface = communicationInterface;
         this.difficulty = difficulty;
         this.isOnline = isOnline;
@@ -124,12 +124,12 @@ public class MainGame extends ApplicationAdapter {
         timer = new Timer();
         bgm.setLooping(true);
         bgm.setLooping(true);
-        if (isAudioOn){
+        if (isAudioOn) {
             bgm.play();
         }
 
         infoSender = new InfoSender();
-        if(isOnline){
+        if (isOnline) {
             infoSender.connect();
         }
 
@@ -151,7 +151,7 @@ public class MainGame extends ApplicationAdapter {
         drawBackground();
         drawObject();
         font24.draw(batch, "SCORE: " + score + "\nLIFE:" + heroAircraft.getHp(), 5, viewportHeight - 10);
-        if(isOnline){
+        if (isOnline) {
             font24.draw(batch, "PLAYER2 SCORE: " + playerTwoScore, 5, viewportHeight - 75);
         }
         batch.end();
@@ -215,7 +215,7 @@ public class MainGame extends ApplicationAdapter {
                                 100, 0, 100, imageManager));
                 bgm.pause();
                 bgm_Boss.setPosition(0);
-                if(isAudioOn){
+                if (isAudioOn) {
                     bgm_Boss.play();
                 }
             }
@@ -313,7 +313,8 @@ public class MainGame extends ApplicationAdapter {
         }
     }
 
-    private void GameEnd() {
+    private void gameEnd() {
+        game_Over.play();
         imageManager.dipose();
         communicationInterface.goRankListActivityAndGetName(score);
         communicationInterface.gameEnd();
@@ -321,6 +322,10 @@ public class MainGame extends ApplicationAdapter {
     }
 
     private void crashCheck() throws IOException {
+        if (heroAircraft.getHp() <= 0) {
+            gameEnd();
+        }
+
         //check whether hero crashes enemy
         for (AbstractAircraft enemy : enemyAircrafts) {
             if (enemy.notValid()) {
@@ -329,16 +334,21 @@ public class MainGame extends ApplicationAdapter {
             if (enemy.crash(heroAircraft)) {
                 // TODO
                 infoSender.send("end");
-                GameEnd();
+                gameEnd();
             }
         }
 
         //check whether enemy bullets hit hero
-        for(AbstractBullet bullet : enemyBullets){
+        for (AbstractBullet bullet : enemyBullets) {
             if (bullet.notValid()) {
                 continue;
             }
-            heroAircraft.decreaseHp(bullet.getPower());
+            else{
+                if(heroAircraft.crash(bullet)){
+                    heroAircraft.decreaseHp(bullet.getPower());
+                    bullet.vanish();
+                }
+            }
         }
 
 
@@ -354,7 +364,7 @@ public class MainGame extends ApplicationAdapter {
                 if (enemy.crash(bullet)) {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
-                    if(isAudioOn){
+                    if (isAudioOn) {
                         bullet_Hit.play();
                     }
                     if (enemy.notValid()) {
@@ -369,7 +379,7 @@ public class MainGame extends ApplicationAdapter {
                             propGeneration(enemy);
                             bgm_Boss.pause();
                             bgm.setPosition(0);
-                            if(isAudioOn){
+                            if (isAudioOn) {
                                 bgm.play();
                             }
                         }
@@ -383,7 +393,7 @@ public class MainGame extends ApplicationAdapter {
             if (!prop.notValid()) {
                 if (heroAircraft.crash(prop)) {
                     if (prop instanceof PropBlood) {
-                        if(isAudioOn){
+                        if (isAudioOn) {
                             get_Supply.play();
                         }
                         prop.vanish();
@@ -391,7 +401,7 @@ public class MainGame extends ApplicationAdapter {
                     } else if (prop instanceof PropBullet) {
                         prop.vanish();
                         timer.clear();
-                        if(isAudioOn){
+                        if (isAudioOn) {
                             get_Supply.play();
                         }
                         heroAircraft.setShootNum(4);
@@ -403,7 +413,7 @@ public class MainGame extends ApplicationAdapter {
                         }, 10, 1);
                     } else if (prop instanceof PropBomb) {
                         prop.vanish();
-                        if(isAudioOn){
+                        if (isAudioOn) {
                             bomb_Explosion.play();
                         }
                         for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext(); ) {

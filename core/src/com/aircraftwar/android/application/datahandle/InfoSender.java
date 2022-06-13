@@ -31,7 +31,7 @@ public class InfoSender {
                     socket = new Socket();
                     //运行时修改成服务器的IP
                     socket.connect(new InetSocketAddress
-                            ("192.168.3.98", 9999), 5000);
+                            ("192.168.3.106", 9999), 5000);
                     writer = new PrintWriter(new BufferedWriter(
                             new OutputStreamWriter(
                                     socket.getOutputStream(), "UTF-8")), true);
