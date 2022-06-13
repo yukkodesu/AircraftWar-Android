@@ -21,12 +21,13 @@ public class AndroidLauncher extends AndroidApplication {
 
         int difficulty = getIntent().getIntExtra("Difficulty", 1);
         boolean isOnline = getIntent().getBooleanExtra("isOnline", false);
+        boolean isAudioOn = getIntent().getBooleanExtra("isAudioOn", true);
         if (difficulty == 1) {
-            initialize(new MainGame(new CommunicationImpl(this), new Simple(), isOnline), config);
+            initialize(new MainGame(new CommunicationImpl(this), new Simple(), isOnline, isAudioOn), config);
         } else if (difficulty == 2) {
-            initialize(new MainGame(new CommunicationImpl(this), new Normal(), isOnline), config);
+            initialize(new MainGame(new CommunicationImpl(this), new Normal(), isOnline, isAudioOn), config);
         } else if (difficulty == 3) {
-            initialize(new MainGame(new CommunicationImpl(this), new Difficult(), isOnline), config);
+            initialize(new MainGame(new CommunicationImpl(this), new Difficult(), isOnline, isAudioOn), config);
         }
     }
 }

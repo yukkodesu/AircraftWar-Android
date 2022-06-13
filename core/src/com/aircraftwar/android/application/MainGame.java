@@ -36,10 +36,11 @@ import java.util.Iterator;
 
 public class MainGame extends ApplicationAdapter {
 
-    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty,boolean isOnline) {
+    public MainGame(CommunicationInterface communicationInterface, Difficulty difficulty,boolean isOnline,boolean isAudioOn) {
         this.communicationInterface = communicationInterface;
         this.difficulty = difficulty;
         this.isOnline = isOnline;
+        this.isAudioOn = isAudioOn;
         setDifficulty(difficulty);
     }
 
@@ -72,7 +73,7 @@ public class MainGame extends ApplicationAdapter {
     private long lastEnemyGenTime = 0;
     private final long enemyGenDuration = 1000000000;
     private long heroLastShootGenTime = 0;
-    private long heroShootGenDuration = 500000000;
+    private long heroShootGenDuration = 50000000;
     private long eliteLastShootGenTime = 0;
     private long eliteShootGenDuration = 500000000;
     private long bossLastShootGenTime = 0;
@@ -95,6 +96,7 @@ public class MainGame extends ApplicationAdapter {
     private boolean isOnline = false;
     private int playerTwoScore = 0;
     private Long lastSend = 0L;
+    private boolean isAudioOn = true;
 
 
     @Override
@@ -122,7 +124,9 @@ public class MainGame extends ApplicationAdapter {
         timer = new Timer();
         bgm.setLooping(true);
         bgm.setLooping(true);
-        bgm.play();
+        if (isAudioOn){
+            bgm.play();
+        }
 
         infoSender = new InfoSender();
         if(isOnline){
@@ -211,7 +215,9 @@ public class MainGame extends ApplicationAdapter {
                                 100, 0, 100, imageManager));
                 bgm.pause();
                 bgm_Boss.setPosition(0);
-                bgm_Boss.play();
+                if(isAudioOn){
+                    bgm_Boss.play();
+                }
             }
         }
     }
@@ -327,6 +333,15 @@ public class MainGame extends ApplicationAdapter {
             }
         }
 
+        //check whether enemy bullets hit hero
+        for(AbstractBullet bullet : enemyBullets){
+            if (bullet.notValid()) {
+                continue;
+            }
+            heroAircraft.decreaseHp(bullet.getPower());
+        }
+
+
         //check whether hero bullets hit enemy
         for (AbstractBullet bullet : heroBullets) {
             if (bullet.notValid()) {
@@ -339,7 +354,9 @@ public class MainGame extends ApplicationAdapter {
                 if (enemy.crash(bullet)) {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
-                    bullet_Hit.play();
+                    if(isAudioOn){
+                        bullet_Hit.play();
+                    }
                     if (enemy.notValid()) {
                         if (enemy instanceof EliteEnemy) {
                             score += 20;
@@ -352,7 +369,9 @@ public class MainGame extends ApplicationAdapter {
                             propGeneration(enemy);
                             bgm_Boss.pause();
                             bgm.setPosition(0);
-                            bgm.play();
+                            if(isAudioOn){
+                                bgm.play();
+                            }
                         }
                     }
                 }
@@ -364,13 +383,17 @@ public class MainGame extends ApplicationAdapter {
             if (!prop.notValid()) {
                 if (heroAircraft.crash(prop)) {
                     if (prop instanceof PropBlood) {
-                        get_Supply.play();
+                        if(isAudioOn){
+                            get_Supply.play();
+                        }
                         prop.vanish();
                         heroAircraft.increaseHp(20);
                     } else if (prop instanceof PropBullet) {
                         prop.vanish();
                         timer.clear();
-                        get_Supply.play();
+                        if(isAudioOn){
+                            get_Supply.play();
+                        }
                         heroAircraft.setShootNum(4);
                         timer.scheduleTask(new Timer.Task() {
                             @Override
@@ -380,7 +403,9 @@ public class MainGame extends ApplicationAdapter {
                         }, 10, 1);
                     } else if (prop instanceof PropBomb) {
                         prop.vanish();
-                        bomb_Explosion.play();
+                        if(isAudioOn){
+                            bomb_Explosion.play();
+                        }
                         for (Iterator<AbstractAircraft> iterator = enemyAircrafts.iterator(); iterator.hasNext(); ) {
                             AbstractAircraft item = iterator.next();
                             if (!(item instanceof BossEnemy)) {

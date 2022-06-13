@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(v: View) {
                 val intent = Intent(v.context,AndroidLauncher::class.java)
                 intent.putExtra("Difficulty",1)
+                intent.putExtra("isAudioOn",binding.audioEnableCheck.isChecked)
                 startActivity(intent)
             }
         })
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(v: View) {
                 val intent = Intent(v.context,AndroidLauncher::class.java)
                 intent.putExtra("Difficulty",1)
+                intent.putExtra("isAudioOn",binding.audioEnableCheck.isChecked)
                 intent.putExtra("isOnline",true)
                 startActivity(intent)
             }
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(v: View) {
                 val intent = Intent(v.context,AndroidLauncher::class.java)
                 intent.putExtra("Difficulty",2)
+                intent.putExtra("isAudioOn",binding.audioEnableCheck.isChecked)
                 startActivity(intent)
             }
         })
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(v: View) {
                 val intent = Intent(v.context,AndroidLauncher::class.java)
                 intent.putExtra("Difficulty",3)
+                intent.putExtra("isAudioOn",binding.audioEnableCheck.isChecked)
                 startActivity(intent)
             }
         })
