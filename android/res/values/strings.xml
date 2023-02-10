@@ -2,5 +2,13 @@
 <resources>
 
     <string name="app_name">AircraftWar</string>
+    <string name="audioEnableCheck">音效打开</string>
+    <string name="simpleButton">简单</string>
+    <string name="middleButton">中等</string>
+    <string name="hardButton">困难</string>
+    <string name="scoreButton">显示排行榜</string>
+    <string name="OnlineButton">在线对战</string>
+    <string name="rankList">排行榜</string>
+    <string name="alertDialogTitle">输入用户名</string>
 
 </resources>

@@ -5,20 +5,23 @@ import com.aircraftwar.android.application.ImageManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.sun.tools.javac.Main;
 
 public abstract class AbstractFlyingObject {
     protected int height = -1;
     protected int width = -1;
-    protected int speedX;
-    protected int speedY;
+    protected float speedX;
+    protected float speedY;
     protected Texture image = null;
-    Rectangle rigidObject = null;
-    private boolean isValid = true;
+    protected Rectangle rigidObject = null;
+    protected boolean isValid = true;
+    protected ImageManager imageManager;
 
 
-    public AbstractFlyingObject(float locationX, float locationY, int speedX, int speedY) {
+    public AbstractFlyingObject(float locationX, float locationY, float speedX, float speedY,ImageManager imageManager) {
         this.speedX = speedX;
         this.speedY = speedY;
+        this.imageManager = imageManager;
         getImage();
         getWidth();
         getHeight();
@@ -32,10 +35,10 @@ public abstract class AbstractFlyingObject {
     public void forward() {
         this.rigidObject.x += speedX * Gdx.graphics.getDeltaTime();
         this.rigidObject.y -= speedY * Gdx.graphics.getDeltaTime();
-        if (this.rigidObject.x <= 0 || this.rigidObject.x >= MainGame.viewportWidth) {
+        if (this.rigidObject.x + this.rigidObject.width/2 <= 0 || this.rigidObject.x + this.rigidObject.width/2 >= MainGame.viewportWidth) {
             speedX = -speedX;
         }
-        if(this.rigidObject.y < 0) {
+        if(this.rigidObject.y + height < 0) {
             vanish();
         }
     }
@@ -53,7 +56,7 @@ public abstract class AbstractFlyingObject {
         return this.rigidObject.y;
     }
 
-    public int getSpeedY() {
+    public float getSpeedY() {
         return speedY;
     }
 
@@ -67,7 +70,7 @@ public abstract class AbstractFlyingObject {
 
     public Texture getImage() {
         if (image == null) {
-            image = ImageManager.get(this);
+            image = imageManager.get(this);
         }
         return image;
     }
@@ -78,15 +81,24 @@ public abstract class AbstractFlyingObject {
 
     public int getWidth() {
         if (width == -1) {
-            width = ImageManager.get(this).getWidth();
+            width = imageManager.get(this).getWidth();
         }
         return width;
     }
 
+
     public int getHeight() {
         if (height == -1) {
-            height = ImageManager.get(this).getHeight();
+            height = imageManager.get(this).getHeight();
         }
         return height;
+    }
+
+    public void setSpeedX(float speedX) {
+        this.speedX = speedX;
+    }
+
+    public void setSpeedY(float speedY) {
+        this.speedY = speedY;
     }
 }
